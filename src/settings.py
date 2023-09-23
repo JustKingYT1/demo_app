@@ -1,4 +1,4 @@
 # DB Settings
 
-DB_PATH = "src\server\database"
-SCRIPTS_DIR = "src\server\database\scripts"
+DB_PATH = "C:/demo_app/src/server/database/shesterochka.db"
+SCRIPTS_DIR = "C:/demo_app/src/server/database/scripts"
