@@ -1,6 +1,6 @@
 from database.db_manager import db_manager
 
-from database.models import RemnantsOfProducts
+from database.models import RemnantsOfProducts, DelRemnantsOfProducts
 
 def new(product: RemnantsOfProducts) -> dict:
     res = db_manager.execute(query="""INSERT INTO RemnantsOfProducts(warehouseID, productID, count) 
@@ -54,7 +54,7 @@ def get_all() -> dict:
 
 def update(new_data: RemnantsOfProducts) -> dict:
     res = db_manager.execute(query="""UPDATE RemnantsOfProducts(productID, count) 
-                                       SET (?, ?, ?) 
+                                       SET (?, ?) 
                                        WHERE (warehouseID, productID) = (?, ?)
                                        RETURNING ID""",
                               args=(new_data.productID, new_data.count, new_data.warehouseID, new_data.productID))
@@ -64,6 +64,6 @@ def update(new_data: RemnantsOfProducts) -> dict:
     return res
 
 
-def delete(data: RemnantsOfProducts) -> dict:
+def delete(data: DelRemnantsOfProducts) -> dict:
     return db_manager.execute(query="""DELETE FROM RemnantsOfProducts WHERE (warehouseID, productID) = (?, ?) """,
                               args=(data.orderID, data.productID))

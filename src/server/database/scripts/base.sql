@@ -25,21 +25,11 @@ CREATE TABLE Locations
         ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
-CREATE TABLE Structures
+CREATE TABLE Warehouses
 (
     ID INT NOT NULL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE
-);
-
-CREATE TABLE Facilities
-(
-    ID INT NOT NULL PRIMARY KEY,
-    structureID INT NOT NULL,
     locationID INT NOT NULL UNIQUE,
     phone VARCHAR(18) NOT NULL UNIQUE,
-    FOREIGN KEY (structureID) 
-        REFERENCES Structures(ID)
-        ON DELETE CASCADE ON UPDATE NO ACTION,
     FOREIGN KEY (locationID) 
         REFERENCES Locations(ID)
         ON DELETE CASCADE ON UPDATE NO ACTION
@@ -115,7 +105,7 @@ CREATE TABLE RemnantsOfProducts
     productID INT NOT NULL,
     count INT NOT NULL,
     FOREIGN KEY (warehouseID)
-        REFERENCES Facilities(ID)
+        REFERENCES Warehouses(ID)
         ON DELETE CASCADE ON UPDATE NO ACTION,
     FOREIGN KEY (productID)
         REFERENCES Products(ID)
