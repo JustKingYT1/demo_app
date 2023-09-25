@@ -53,8 +53,8 @@ def get_all() -> dict:
 
 
 def update(new_data: RemnantsOfProducts) -> dict:
-    res = db_manager.execute(query="""UPDATE RemnantsOfProducts(productID, count) 
-                                       SET (?, ?) 
+    res = db_manager.execute(query="""UPDATE RemnantsOfProducts 
+                                       SET (productID, count) = (?, ?) 
                                        WHERE (warehouseID, productID) = (?, ?)
                                        RETURNING ID""",
                               args=(new_data.productID, new_data.count, new_data.warehouseID, new_data.productID))

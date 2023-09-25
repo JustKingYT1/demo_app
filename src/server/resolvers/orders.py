@@ -49,8 +49,8 @@ def get_all() -> dict:
     return res
 
 def complete(orderID: int, new_data: OrderComplete) -> dict:
-    res = db_manager.execute(query="""UPDATE Orders(completed) 
-                                       SET (?) 
+    res = db_manager.execute(query="""UPDATE Orders
+                                       SET completed = ? 
                                        WHERE (orderID) = (?)
                                        RETURNING ID""",
                               args=(new_data.completed, orderID))

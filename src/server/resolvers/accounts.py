@@ -46,8 +46,8 @@ def get_all() -> dict:
 
 
 def update_login(user_id: int, new_login: AccountLog) -> dict:
-    res = db_manager.execute(query="""UPDATE Accounts(login) 
-                                       SET (?) 
+    res = db_manager.execute(query="""UPDATE Accounts 
+                                       SET login = ? 
                                        WHERE ID = ?
                                        RETURNING ID""",
                               args=(user_id, new_login.login))
@@ -58,8 +58,8 @@ def update_login(user_id: int, new_login: AccountLog) -> dict:
     return res
 
 def update_password(user_id: int, new_password: AccountPass) -> dict:
-    res = db_manager.execute(query="""UPDATE Accounts(login) 
-                                       SET (?) 
+    res = db_manager.execute(query="""UPDATE Accounts
+                                       SET password = ?
                                        WHERE ID = ?
                                         RETURNING ID""",
                               args=(user_id, new_password.password))
