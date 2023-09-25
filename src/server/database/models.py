@@ -43,8 +43,9 @@ class ProductDel(ListProducts):
     count: Optional[int]
 
 
+class DelRemnantsOfProducts(ModifyBaseModel):
+    count: int
 
-class RemnantsOfProducts(ModifyBaseModel):
+class RemnantsOfProducts(DelRemnantsOfProducts):
     warehouseID: int
     productID: int
-    count: int

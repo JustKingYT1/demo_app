@@ -127,12 +127,9 @@ INSERT INTO Locations(ID, regionID, locale, coordinates) VALUES (2, 2, 'Стат
 INSERT INTO Locations(ID, regionID, locale, coordinates) VALUES (3, 3, 'Эйфелева башня', 'Широта: 53.06230, долгота: -5.78470');
 INSERT INTO Locations(ID, regionID, locale, coordinates) VALUES (4, 4, 'Нойшванштайн', 'Широта: 1.70418, долгота: -61.87414');
 
-INSERT INTO Structures(ID, name) VALUES (1, 'Склад');
-INSERT INTO Structures(ID, name) VALUES (2, 'Филиал');
-
-INSERT INTO Facilities(ID, structureID, locationID, phone) VALUES (1, 1, 1, '79564367244');
-INSERT INTO Facilities(ID, structureID, locationID, phone) VALUES (2, 1, 3, '79556367269');
-INSERT INTO Facilities(ID, structureID, locationID, phone) VALUES (3, 2, 4, '79454363962');
+INSERT INTO Warehouses(ID, locationID, phone) VALUES (1, 1, '79564367244');
+INSERT INTO Warehouses(ID, locationID, phone) VALUES (2, 3, '79556367269');
+INSERT INTO Warehouses(ID, locationID, phone) VALUES (3, 4, '79454363962');
 
 INSERT INTO TypesOfUsers(ID, type, accessLevel) VALUES (1, 'Guest', 0);
 INSERT INTO TypesOfUsers(ID, type, accessLevel) VALUES (2, 'User', 1);
