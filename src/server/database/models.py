@@ -3,19 +3,17 @@ from typing import Optional
 
 
 class ModifyBaseModel(BaseModel):
-    id: int
+    ID: int
 
 
-class AccountPass(ModifyBaseModel):
+class AccountPass(BaseModel):
     password: str
 
 
-class AccountLog(ModifyBaseModel):
-    login: str
-
-
-class Accounts(AccountPass, AccountLog):
+class Accounts(BaseModel):
     userID: int
+    login: str
+    password: str
 
 
 class Orders(ModifyBaseModel):
@@ -25,27 +23,34 @@ class Orders(ModifyBaseModel):
     completed: bool = False
 
 
-class OrderComplete(ModifyBaseModel):
+class OrderComplete(BaseModel):
     completed: bool
 
 
-class ListProducts(ModifyBaseModel):
+class ListProducts(BaseModel):
     orderID: int
     productID: int
     count: int
 
 
-class ProductUpd(ListProducts):
+class ListProductsUpd(BaseModel):
+    orderID: int
+    productID: int
+    count: int
     new_productID: int
 
 
-class ProductDel(ListProducts):
-    count: Optional[int]
+class ListProductsDelOrGet(BaseModel):
+    orderID: int
+    productID: int
 
 
-class DelRemnantsOfProducts(ModifyBaseModel):
-    count: int
-
-class RemnantsOfProducts(DelRemnantsOfProducts):
+class RemnantsOfProducts(BaseModel):
     warehouseID: int
     productID: int
+    count: int  
+
+    
+class UpdRemnantsOfProducts(RemnantsOfProducts):
+    new_productID: int
+

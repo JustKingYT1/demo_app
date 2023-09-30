@@ -56,7 +56,7 @@ CREATE TABLE Users
 
 CREATE TABLE Accounts
 (
-    ID INT NOT NULL PRIMARY KEY,
+    ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     userID INT NOT NULL UNIQUE,
     login VARCHAR(25) NOT NULL UNIQUE,
     password VARCHAR(50) NOT NULL,
@@ -84,9 +84,9 @@ CREATE TABLE Product
     cost INT NOT NULL
 );
 
-CREATE TABLE ListOfProducts
+CREATE TABLE ListProducts
 (
-    ID INT NOT NULL PRIMARY KEY,
+    ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     orderID INT NOT NULL,
     productID INT NOT NULL,
     count INT NOT NULL,
@@ -100,7 +100,7 @@ CREATE TABLE ListOfProducts
 
 CREATE TABLE RemnantsOfProducts
 (
-    ID INT NOT NULL PRIMARY KEY,
+    ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     warehouseID INT NOT NULL,
     productID INT NOT NULL,
     count INT NOT NULL,
@@ -111,38 +111,3 @@ CREATE TABLE RemnantsOfProducts
         REFERENCES Products(ID)
         ON DELETE CASCADE ON UPDATE NO ACTION
 );
-
-INSERT INTO Countries(ID, name) VALUES (1, 'Россия');
-INSERT INTO Countries(ID, name) VALUES (2, 'Америка');
-INSERT INTO Countries(ID, name) VALUES (3, 'Франция');
-INSERT INTO Countries(ID, name) VALUES (4, 'Германия');
-
-INSERT INTO Regions(ID, countryID, name) VALUES (1, 1, 'Город Москва');
-INSERT INTO Regions(ID, countryID, name) VALUES (2, 2, 'Северо-восток');
-INSERT INTO Regions(ID, countryID, name) VALUES (3, 3, 'Аквитания');
-INSERT INTO Regions(ID, countryID, name) VALUES (4, 4, 'Бавария');
-
-INSERT INTO Locations(ID, regionID, locale, coordinates) VALUES (1, 1, 'Красная площадь', 'Широта: -71.36980, долгота: 110.98373');
-INSERT INTO Locations(ID, regionID, locale, coordinates) VALUES (2, 2, 'Статуя свободы', 'Широта: 58.00203, долгота: -47.57092');
-INSERT INTO Locations(ID, regionID, locale, coordinates) VALUES (3, 3, 'Эйфелева башня', 'Широта: 53.06230, долгота: -5.78470');
-INSERT INTO Locations(ID, regionID, locale, coordinates) VALUES (4, 4, 'Нойшванштайн', 'Широта: 1.70418, долгота: -61.87414');
-
-INSERT INTO Warehouses(ID, locationID, phone) VALUES (1, 1, '79564367244');
-INSERT INTO Warehouses(ID, locationID, phone) VALUES (2, 3, '79556367269');
-INSERT INTO Warehouses(ID, locationID, phone) VALUES (3, 4, '79454363962');
-
-INSERT INTO TypesOfUsers(ID, type, accessLevel) VALUES (1, 'Guest', 0);
-INSERT INTO TypesOfUsers(ID, type, accessLevel) VALUES (2, 'User', 1);
-INSERT INTO TypesOfUsers(ID, type, accessLevel) VALUES (3, 'Manager', 2);
-INSERT INTO TypesOfUsers(ID, type, accessLevel) VALUES (4, 'Admin', 3);
-
-INSERT INTO Users(ID, typeID, FIO, phone, dateBirth) VALUES (1, 1, 'Зайкин Иван Иванович', '794541253', '2004.01.07');
-INSERT INTO Users(ID, typeID, FIO, phone, dateBirth) VALUES (2, 2, 'Степанов Антон Александрович', '7954754732', '2002.12.05');
-INSERT INTO Users(ID, typeID, FIO, phone, dateBirth) VALUES (3, 3, 'Коломин Никита Вячеславович', '7976937665', '2003.25.02');
-INSERT INTO Users(ID, typeID, FIO, phone, dateBirth) VALUES (4, 4, 'Гордеев Вадим Сергеевич', '7956824355', '2001.08.11');
-
-INSERT INTO Products(ID, title, cost) VALUES (1, 'Карандаш', 15);
-INSERT INTO Products(ID, title, cost) VALUES (2, 'Ручка', 25);
-INSERT INTO Products(ID, title, cost) VALUES (3, 'Линейка', 45);
-INSERT INTO Products(ID, title, cost) VALUES (4, 'Ластик', 23);
-

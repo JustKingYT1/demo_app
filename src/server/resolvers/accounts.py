@@ -1,14 +1,14 @@
-from database.db_manager import db_manager
+from server.database.db_manager import db_manager
 
-from database.models import AccountLog, AccountPass, Accounts
+from server.database.models import AccountPass, Accounts
 
 def new(account: Accounts) -> dict:
-    res =  db_manager.execute(query="""INSERT INTO Accounts(userID, login, password) 
+    res = db_manager.execute(query="""INSERT INTO Accounts(userID, login, password) 
                                        VALUES(?, ?, ?) 
                                        RETURNING ID""", 
                               args=(account.userID, account.login, account.password))
-    
-    res["result"] = None if not res["result"] else get(res["result"][0])
+
+    res["result"] = None if not res["result"] else get(res["result"][0])["result"]
 
     return res
     
@@ -16,15 +16,19 @@ def new(account: Accounts) -> dict:
 def get(user_id: int) -> dict:
     res = db_manager.execute(query="""SELECT * 
                                        FROM Accounts 
-                                       WHERE ID = ?""", 
+                                       WHERE userID = ?""", 
                               args=(user_id,))
-
+    
     res["result"] = None if not res["result"] else Accounts(
-        id=res["result"][0],
-        login=res["result"][1],
-        password=res["result"][2],
-        userID=res["result"][3]
+        userID=res["result"][1],
+        login=res["result"][2],
+        password=res["result"][3]
     )
+
+    if res["result"] is None:
+        res["msg"] = "Not found"
+        res["code"] = 400
+        res["error"] = True
 
     return res
 
@@ -38,39 +42,47 @@ def get_all() -> dict:
     if res["result"]:
         for account in res["result"]:
             list_accounts.append(Accounts(
-                id=account["result"][0],
-                login=account["result"][1],
-                password=account["result"][2],
-                userID=account["result"][3]                
-            ))
+                userID=account[1],
+                login=account[2],
+                password=account[3],               
+           ))
+            
+    res["result"] = None if len(list_accounts) == 0 else list_accounts
 
-
-def update_login(user_id: int, new_login: AccountLog) -> dict:
-    res = db_manager.execute(query="""UPDATE Accounts 
-                                       SET login = ? 
-                                       WHERE ID = ?
-                                       RETURNING ID""",
-                              args=(user_id, new_login.login))
-    
-    res["msg"] = None if not res["result"] else "Successfully"
-    res["result"] = None if not res["result"] else get(res["result"][0])
+    if res["result"] is None:
+        res["msg"] = "Not found"
+        res["code"] = 400
+        res["error"] = True
 
     return res
 
-def update_password(user_id: int, new_password: AccountPass) -> dict:
+
+def update(user_id: int, new_password: AccountPass) -> dict:
     res = db_manager.execute(query="""UPDATE Accounts
                                        SET password = ?
-                                       WHERE ID = ?
-                                        RETURNING ID""",
-                              args=(user_id, new_password.password))
+                                       WHERE ID = ?""",
+                              args=(new_password.password, user_id))
     
-    res["msg"] = None if not res["result"] else "Successfully"
-    res["result"] = None if not res["result"] else get(res["result"][0])
+    res["result"] = get(user_id=user_id)["result"]
+
+    if res["result"] is None:
+        res["msg"] = "Not found"
+        res["code"] = 400
+        res["error"] = True
 
     return res
 
 
 def delete(user_id: int) -> dict:
-    return db_manager.execute(query="""DELETE FROM Accounts 
+    check_user = get(user_id=user_id)["result"]
+
+    res = db_manager.execute(query="""DELETE FROM Accounts 
                                        WHERE userID = ?""", 
                               args=(user_id,))
+
+    if check_user is None:
+        res["msg"] = "Not found"
+        res["code"] = 400
+        res["error"] = True
+
+    return res

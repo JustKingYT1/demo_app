@@ -1,14 +1,13 @@
-from database.db_manager import db_manager
+from server.database.db_manager import db_manager
 
-from database.models import ListProducts, ProductUpd, ProductDel
-
+from server.database.models import ListProducts, ListProductsUpd, ListProductsDelOrGet
 def new(product: ListProducts) -> dict:
     res = db_manager.execute(query="""INSERT INTO ListProducts(orderID, productID, count) 
                                           VALUES(?, ?, ?) 
-                                          RETURNING orderID""", 
+                                          RETURNING orderID, productID""", 
                               args=(product.orderID, product.productID, product.count))
 
-    res["result"] = None if not res["result"] else get(res["result"][0])
+    res["result"] = None if not res["result"] else getOneProduct(order_id=res["result"][0], product_id=res["result"][1])["result"]
 
     return res
 
@@ -23,22 +22,51 @@ def get(order_id: int) -> dict:
     res = db_manager.execute(query="""SELECT * 
                                        FROM ListProducts 
                                        WHERE orderID = ?""", 
-                              args=(order_id,)) 
+                              args=(order_id,),
+                              many=True) 
+    
+    list_products_lists = []
+
+    if res["result"]:
+        for list_products in res["result"]:
+            list_products_lists.append(ListProducts(
+                orderID=list_products[1],
+                productID=list_products[2],
+                count=list_products[3]))
+            
+    res["result"] = None if len(list_products_lists) == 0 else list_products_lists
+
+    if res["result"] is None:
+        res["msg"] = "Not found"
+        res["code"] = 400
+        res["error"] = True
+
+    return res
+
+
+def getOneProduct(order_id: int, product_id: int) -> dict:
+    res = db_manager.execute(query="""SELECT * 
+                                      FROM ListProducts 
+                                      WHERE orderID = ? AND productID = ?""", 
+                              args=(order_id, product_id,))
     
     res["result"] = None if not res["result"] else ListProducts(
-        id=res["result"][0],
         orderID=res["result"][1],
-        productID=res["result"][2],
+        productID=res["result"][2],  
         count=res["result"][3]
     )
+
+    if res["result"] is None:
+        res["msg"] = "Not found"
+        res["code"] = 400
+        res["error"] = True
 
     return res
 
 
 def get_all() -> dict:
     res = db_manager.execute(query="""SELECT * 
-                                       FROM ListProducts
-                                       GROUP BY orderID""", 
+                                       FROM ListProducts""", 
                               many=True)
 
     list_products_lists = []
@@ -46,28 +74,58 @@ def get_all() -> dict:
     if res["result"]:
         for list_products in res["result"]:
             list_products_lists.append(ListProducts(
-                id=list_products["result"][0],
-                orderID=list_products["result"][1],
-                productID=list_products["result"][2],
-                count=list_products["result"][3]))
-        res["result"] = list_products_lists
-    else:
-        res["result"] = None
+                orderID=list_products[1],
+                productID=list_products[2],
+                count=list_products[3]))
+            
+    res["result"] = None if len(list_products_lists) == 0 else list_products_lists
+
+    if res["result"] is None:
+        res["msg"] = "Not found"
+        res["code"] = 400
+        res["error"] = True
 
     return res
 
-def update(new_data: ProductUpd) -> dict:
+def update(new_data: ListProductsUpd) -> dict:
     res = db_manager.execute(query="""UPDATE ListProducts 
                                        SET (productID, count) = (?, ?) 
-                                       WHERE (orderID, productID) = (?, ?)
-                                       RETURNING orderID""",
+                                       WHERE (orderID, productID) = (?, ?)""",
                               args=(new_data.new_productID, new_data.count, new_data.orderID, new_data.productID))
 
-    res["result"] = None if not res["result"] else get(res["result"][0])
+    res["result"] = getOneProduct(order_id=new_data.orderID, product_id=new_data.new_productID)["result"]
+
+    if res["result"] is None:
+        res["msg"] = "Not found"
+        res["code"] = 400
+        res["error"] = True
     
     return res
 
 
-def delete(data: ProductDel) -> dict:
-    return db_manager.execute(query="""DELETE FROM ListProducts WHERE (orderID, productID) = (?, ?) """,
-                              args=(data.orderID, data.productID))
+def deleteOneProduct(order_id: int, product_id: int) -> dict:
+    check_product_in_order = getOneProduct(order_id=order_id, product_id=product_id)["result"]
+
+    res = db_manager.execute(query="""DELETE FROM ListProducts WHERE (orderID, productID) = (?, ?) """,
+                              args=(order_id, product_id))
+    
+    if check_product_in_order is None:
+        res["msg"] = "Not found"
+        res["code"] = 400
+        res["error"] = True
+
+    return res
+
+
+def delete(order_id: int) -> dict:
+    check_order = get(order_id=order_id)["result"]
+
+    res = db_manager.execute(query="""DELETE FROM ListProducts WHERE orderID = ?""",
+                              args=(order_id,))
+
+    if check_order is None:
+        res["msg"] = "Not found"
+        res["code"] = 400
+        res["error"] = True
+
+    return res
