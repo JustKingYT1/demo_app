@@ -5,9 +5,9 @@ from server.database.models import AccountPass, Accounts
 def new(account: Accounts) -> dict:
     res = db_manager.execute(query="""INSERT INTO Accounts(userID, login, password) 
                                        VALUES(?, ?, ?) 
-                                       RETURNING ID""", 
+                                       RETURNING userID""", 
                               args=(account.userID, account.login, account.password))
-
+    print(res)
     res["result"] = None if not res["result"] else get(res["result"][0])["result"]
 
     return res
