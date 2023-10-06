@@ -10,11 +10,22 @@ class AccountPass(BaseModel):
     password: str
 
 
+class SignIn(BaseModel):
+    FIO: str
+
+class AccountLog(AccountPass):
+    userID: int
+    login: str
+
+
 class Accounts(BaseModel):
     userID: int
     login: str
     password: str
 
+
+class UserAccount(Accounts):
+    access_level: int
 
 class Orders(ModifyBaseModel):
     accountID: int

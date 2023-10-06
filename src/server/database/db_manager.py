@@ -35,10 +35,10 @@ class DBManager:
 
     def create_base(self, script_path: str) -> None:
         conn, cur = self.connect_to_db()
-        if self.check_base():
-            cur.executescript(open(script_path).read())
-            conn.commit()
-            conn.close()
+        # if self.check_base():
+        cur.executescript(open(script_path).read())
+        conn.commit()
+        conn.close()
 
 
 db_manager = DBManager(default_path=settings.DB_PATH)

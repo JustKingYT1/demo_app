@@ -1,13 +1,13 @@
 from server.database.db_manager import db_manager
 
-from server.database.models import AccountPass, Accounts
+from server.database.models import AccountPass, Accounts, AccountLog, SignIn
 
 def new(account: Accounts) -> dict:
     res = db_manager.execute(query="""INSERT INTO Accounts(userID, login, password) 
                                        VALUES(?, ?, ?) 
                                        RETURNING userID""", 
                               args=(account.userID, account.login, account.password))
-    print(res)
+
     res["result"] = None if not res["result"] else get(res["result"][0])["result"]
 
     return res
@@ -24,6 +24,20 @@ def get(user_id: int) -> dict:
         login=res["result"][2],
         password=res["result"][3]
     )
+
+    if res["result"] is None:
+        res["msg"] = "Not found"
+        res["code"] = 400
+        res["error"] = True
+
+    return res
+
+
+def sign(data: SignIn) -> dict:
+    res = db_manager.execute(query="""SELECT ID 
+                                       FROM Users 
+                                       WHERE FIO = ?""", 
+                              args=(data.FIO,))
 
     if res["result"] is None:
         res["msg"] = "Not found"
@@ -79,10 +93,25 @@ def delete(user_id: int) -> dict:
     res = db_manager.execute(query="""DELETE FROM Accounts 
                                        WHERE userID = ?""", 
                               args=(user_id,))
-
+    
     if check_user is None:
         res["msg"] = "Not found"
         res["code"] = 400
         res["error"] = True
+
+    return res
+
+
+def login(account: AccountLog):
+    res = db_manager.execute(query="""SELECT userID FROM Accounts WHERE userID = ? AND login = ? AND password = ?""",
+                             args=(account.userID, account.login, account.password))
+
+    if res["result"] is None:
+        res["msg"] = "Incorrect login or password"
+        res["code"] = 400
+        res["error"] = True
+        return res
+    
+    res["result"] = get(user_id=res["result"][0])["result"]
 
     return res
