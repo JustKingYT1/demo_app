@@ -2,7 +2,6 @@ from typing import Optional
 from PySide6 import QtWidgets, QtCore, QtGui
 import PySide6.QtGui
 import PySide6.QtWidgets
-from ui.main_window import main_win
 from src.server.database.models import UserAccount
 
 
@@ -39,7 +38,6 @@ class RegisterWindow(QtWidgets.QDialog):
     
     def __settingUI(self) -> None:
         self.setWindowTitle("Sign up")
-        self.setMinimumSize(370, 225)
 
         self.setLayout(self.main_v_layout)
         self.main_v_layout.addLayout(self.label_line_edit_h_layout)
@@ -53,11 +51,10 @@ class RegisterWindow(QtWidgets.QDialog):
         self.label_v_layout.addWidget(self.label_password)
         self.label_v_layout.addWidget(self.label_confirm)
 
-
         self.line_edit_v_layout.addWidget(self.line_edit_userID)
         self.line_edit_v_layout.addWidget(self.line_edit_access_level)
-        self.line_edit_v_layout.addWidget(self.line_edit_login)
         self.line_edit_v_layout.addSpacerItem(self.spacer)
+        self.line_edit_v_layout.addWidget(self.line_edit_login)
         self.line_edit_v_layout.addWidget(self.line_edit_password)
         self.line_edit_v_layout.addWidget(self.line_edit_confirm)
 
@@ -85,13 +82,12 @@ class RegisterWindow(QtWidgets.QDialog):
 
     
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
-        if event.key == QtCore.Qt.Key.Key_Return:
+        if event.key() == QtCore.Qt.Key.Key_Return.numerator:
             self.register()
 
     
     def on_register_button_clicked(self) -> None:
         self.register()
-
 
     def data_is_valid(self) -> bool:
         if self.line_edit_password.text() != self.line_edit_confirm.text():
@@ -117,11 +113,14 @@ class RegisterWindow(QtWidgets.QDialog):
                 error=True,
                 parent=self
             )
-        
+
         if self.parent().session.auth:
             self.parent().show_message(
                 text='Successful register',
                 error=False,
                 parent=self
             )
+        
+        self.parent().open_login_dialog()
+        self.close()
         

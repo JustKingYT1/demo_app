@@ -5,6 +5,8 @@ import PySide6.QtWidgets
 from ui.api import resolvers
 from src.ui.api.session import Session
 from ui.sign_in_form import SignWindow
+from ui.register_form import RegisterWindow
+from ui.login_form import LoginWindow
 
 main_win = None
 
@@ -32,11 +34,14 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.__connect_check()["code"] == 400:
                 self.show_message(text=self.__connect_check()["msg"], error=True, parent=self)
                 exit()
-                
+        
 
         sign_window = SignWindow(self)
         sign_window.show()
         sign_window.exec_()
+
+        if self.session.user.userID == -1:
+            exit()
 
         self.show()
             
@@ -51,15 +56,27 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.main_h_layout = QtWidgets.QHBoxLayout()
 
-        self.sign_in_button = QtWidgets.QPushButton()
+        self.log_in_button = QtWidgets.QPushButton()
         self.sign_up_button = QtWidgets.QPushButton()
 
 
     def __settingUI(self) -> None:
         self.setCentralWidget(self.central_widget)
         self.central_widget.setLayout(self.main_h_layout)
-        self.main_h_layout.addWidget(self.sign_in_button)
+        self.main_h_layout.addWidget(self.log_in_button)
         self.main_h_layout.addWidget(self.sign_up_button)
+
+        self.log_in_button.setText("Log in!")
+        self.sign_up_button.setText("Sign up!")
+
+        self.log_in_button.clicked.connect(self.open_login_dialog)
+        self.sign_up_button.clicked.connect(self.open_register_dialog)
+
+    def open_login_dialog(self) -> None:
+        LoginWindow(self)
+
+    def open_register_dialog(self) -> None:
+        RegisterWindow(self)
     
 
     def show_message(self, text: str, error: bool = False, parent=None) -> None:

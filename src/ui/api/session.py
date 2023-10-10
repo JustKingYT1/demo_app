@@ -32,10 +32,10 @@ class Session:
             
             case 200:
                 self.error = None
-                self.user = UserAccount(userID=answer["result"][0],
-                                        login=answer["result"][1],
-                                        password=answer["result"][2],
-                                        access_level=resolvers.get_access_level(answer["result"][0]))
+                self.user = UserAccount(userID=answer["result"]["userID"],
+                                        login=answer["result"]["login"],
+                                        password=answer["result"]["password"],
+                                        access_level=resolvers.get_access_level(answer["result"]["userID"])["result"]["access_level"])
                 self.auth = True
     
     def register(self, login: str, password: str):
@@ -45,11 +45,11 @@ class Session:
                 self.error = answer["msg"]
                 
             case 200:
-                self.error = answer["msg"]
-                self.user = UserAccount(userID=answer["result"][0],
-                                        login=answer["result"][1],
-                                        password=answer["result"][2],
-                                        access_level=resolvers.get_access_level(answer["result"][0]))
+                self.error = None
+                self.user = UserAccount(userID=answer["result"]["userID"],
+                                        login=answer["result"]["login"],
+                                        password=answer["result"]["password"],
+                                        access_level=resolvers.get_access_level(answer["result"]["userID"])["result"]["access_level"])
                 self.auth = True
 
     def update(self, password: str):

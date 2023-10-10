@@ -57,7 +57,7 @@ class SignWindow(QtWidgets.QDialog):
         self.sign()
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
-        if event.key == QtCore.Qt.Key.Key_Return:
+        if event.key() == QtCore.Qt.Key.Key_Return.numerator:
             self.sign()
 
     
