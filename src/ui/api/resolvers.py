@@ -11,8 +11,8 @@ sys.path.append("C:\demo_app\src")
 import settings
 
 
-def server_available(func: Callable) -> Callable:
-    def need_it(*args, **kwargs) -> Callable:
+def server_available(func) -> Callable[[tuple[Any, ...], dict[str, Any]], dict[str, str] | Any]:
+    def need_it(*args, **kwargs):
         try:
             requests.get(url=settings.URL)
             return func(*args, **kwargs)
@@ -27,16 +27,20 @@ def get_access_level(user_id: int) -> int | dict:
 
 @server_available
 def get_userID(data: SignIn) -> dict:
-    return requests.post(url=f'{settings.URL}/accounts/sign', data=data).json()
+    user = f'{{"FIO": "{data.FIO}"}}'
+    return requests.post(url=f'{settings.URL}/accounts/sign', data=user).json()
 
 @server_available
 def register(user: Accounts) -> dict:
-    return requests.post(url=f'{settings.URL}/accounts/new', data=user).json()
+    data = f'{{"userID": "{user.userID}", "login": "{user.login}", "password": "{user.password}"}}'
+    return requests.post(url=f'{settings.URL}/accounts/new', data=data).json()
 
 @server_available
 def login(user: Accounts) -> dict:
-    return requests.post(url=f'{settings.URL}/accounts/login', data=user).json()
+    data = f'{{"userID": "{user.userID}", "login": "{user.login}", "password": "{user.password}"}}'
+    return requests.post(url=f'{settings.URL}/accounts/login', data=data).json()
 
 @server_available
 def update(password: AccountPass, userID: int) -> dict:
-    return requests.put(url=f"{settings.URL}/accounts/updatePassword/{userID}", data=password).json()
+    data = f'{{"password": "{password.password}"}}'
+    return requests.put(url=f"{settings.URL}/accounts/updatePassword/{userID}", data=data).json()

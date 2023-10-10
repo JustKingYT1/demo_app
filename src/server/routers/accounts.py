@@ -21,7 +21,6 @@ def get_account(user_id: int) -> dict:
 def sign_in(data: SignIn) -> dict:
     return accounts.sign(data=data)
 
-
 @accounts_router.get(path='/get', response_model=dict)
 def get_all_accounts() -> dict:
     return accounts.get_all()

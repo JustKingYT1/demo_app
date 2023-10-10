@@ -4,8 +4,8 @@ import PySide6.QtCore
 import PySide6.QtWidgets
 from ui.api import resolvers
 from src.ui.api.session import Session
+from ui.sign_in_form import SignWindow
 
-session: Session = Session()
 main_win = None
 
 def include_widgets(elements: dict[str, QtWidgets.QWidget]):
@@ -22,21 +22,51 @@ def include_widgets(elements: dict[str, QtWidgets.QWidget]):
 
 
 class MainWindow(QtWidgets.QMainWindow):
+    session: Session = Session()
+
     def __init__(self) -> None:
         super().__init__()
-        if {"code": 400} in self.__connect_check():
-            self.show_message(text=self.__connect_check()["msg"], error=True, parent=self)
-            
+        self.__initUI()
+        self.__settingUI()
+        if self.__connect_check():
+            if self.__connect_check()["code"] == 400:
+                self.show_message(text=self.__connect_check()["msg"], error=True, parent=self)
+                exit()
+                
 
+        sign_window = SignWindow(self)
+        sign_window.show()
+        sign_window.exec_()
+
+        self.show()
+            
+    @staticmethod
     @resolvers.server_available
     def __connect_check() -> None:
         return None
+    
+
+    def __initUI(self) -> None:
+        self.central_widget = QtWidgets.QWidget()
+
+        self.main_h_layout = QtWidgets.QHBoxLayout()
+
+        self.sign_in_button = QtWidgets.QPushButton()
+        self.sign_up_button = QtWidgets.QPushButton()
+
+
+    def __settingUI(self) -> None:
+        self.setCentralWidget(self.central_widget)
+        self.central_widget.setLayout(self.main_h_layout)
+        self.main_h_layout.addWidget(self.sign_in_button)
+        self.main_h_layout.addWidget(self.sign_up_button)
     
 
     def show_message(self, text: str, error: bool = False, parent=None) -> None:
         messagebox = QtWidgets.QMessageBox(parent=self if not parent else parent)
         messagebox.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
         messagebox.setWindowTitle('Error' if error else 'Information')
-        messagebox.setText(text=text)
+        messagebox.setText(text)
         messagebox.setIcon(QtWidgets.QMessageBox.Icon.Critical if error else QtWidgets.QMessageBox.Icon.Information)
         messagebox.show()
+        messagebox.exec_()
