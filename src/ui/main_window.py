@@ -1,26 +1,14 @@
-from typing import Optional
 from PySide6 import QtCore, QtWidgets, QtGui
-import PySide6.QtCore
-import PySide6.QtWidgets
+import PySide6.QtGui
 from ui.api import resolvers
 from src.ui.api.session import Session
 from ui.sign_in_form import SignWindow
-from ui.register_form import RegisterWindow
-from ui.login_form import LoginWindow
-
-main_win = None
-
-def include_widgets(elements: dict[str, QtWidgets.QWidget]):
-    global session
-
-    for key, item in elements.items():
-        if not issubclass(type(item), QtWidgets.QWidget):
-            continue
-
-        if item.property('access_level') is not None:
-            item.show() if session.user.access_level >= item.property('access_level') else item.hide()
-
-        include_widgets(item.__dict__)
+from ui.orders_list import OrdersList
+from ui.page_list_menu import PageListMenu
+from ui.products_list import ProductsList
+from ui.tools import include_widgets
+from ui.authorization_menu import AuthorizationMenu
+from ui.user_profile import UserProfile
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -28,8 +16,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self) -> None:
         super().__init__()
-        self.__initUI()
-        self.__settingUI()
         if self.__connect_check():
             if self.__connect_check()["code"] == 400:
                 self.show_message(text=self.__connect_check()["msg"], error=True, parent=self)
@@ -43,6 +29,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.session.user.userID == -1:
             exit()
 
+        self.__initUI()
+        self.__settingUI()
         self.show()
             
     @staticmethod
@@ -52,31 +40,55 @@ class MainWindow(QtWidgets.QMainWindow):
     
 
     def __initUI(self) -> None:
-        self.central_widget = QtWidgets.QWidget()
-
+        self.central_widget = QtWidgets.QWidget(self)
         self.main_h_layout = QtWidgets.QHBoxLayout()
-
-        self.log_in_button = QtWidgets.QPushButton()
-        self.sign_up_button = QtWidgets.QPushButton()
-
+        self.widget_container = QtWidgets.QWidget(self)
+        self.widget_container_layout = QtWidgets.QVBoxLayout()
+        self.page_list = PageListMenu(self)
+        self.product_list = ProductsList(self)
+        self.orders_list = OrdersList(self)
+        self.user_profile = UserProfile(self)
+        self.authorization_menu = AuthorizationMenu(self)
 
     def __settingUI(self) -> None:
+        self.resize(930, 615)
         self.setCentralWidget(self.central_widget)
         self.central_widget.setLayout(self.main_h_layout)
-        self.main_h_layout.addWidget(self.log_in_button)
-        self.main_h_layout.addWidget(self.sign_up_button)
+        self.widget_container.setLayout(self.widget_container_layout)
+        self.main_h_layout.setContentsMargins(0, 0, 0, 0)
+        self.widget_container_layout.setContentsMargins(0, 0, 0, 0)
+        self.widget_container_layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
 
-        self.log_in_button.setText("Log in!")
-        self.sign_up_button.setText("Sign up!")
+        self.main_h_layout.addWidget(self.page_list)
+        self.main_h_layout.addWidget(self.widget_container)
+        self.main_h_layout.addWidget(self.authorization_menu)
+        self.main_h_layout.addWidget(self.user_profile)
 
-        self.log_in_button.clicked.connect(self.open_login_dialog)
-        self.sign_up_button.clicked.connect(self.open_register_dialog)
+        self.widget_container_layout.addWidget(self.product_list)
+        self.widget_container_layout.addWidget(self.orders_list)
+        self.page_list.product_item.bind_widget(self.product_list)
+        self.page_list.users_item.bind_widget(self.product_list)
+        self.page_list.orders_item.bind_widget(self.orders_list)
 
-    def open_login_dialog(self) -> None:
-        LoginWindow(self)
+        self.product_list.update_products()
+        self.orders_list.update_orders()
 
-    def open_register_dialog(self) -> None:
-        RegisterWindow(self)
+        include_widgets(main_win=self, elements=self.__dict__)
+
+        # self.log_in_button.clicked.connect(self.open_login_dialog)
+        # self.sign_up_button.clicked.connect(self.open_register_dialog)
+
+        self.user_profile.hide()
+
+        self.page_list.product_item.switch_page()
+
+
+    def authorization(self) -> None:
+        self.authorization_menu.hide()
+        self.user_profile.show()
+        self.user_profile.fill_line_edits()
+
+        include_widgets(self, self.__dict__)
     
 
     def show_message(self, text: str, error: bool = False, parent=None) -> None:
@@ -87,3 +99,9 @@ class MainWindow(QtWidgets.QMainWindow):
         messagebox.setIcon(QtWidgets.QMessageBox.Icon.Critical if error else QtWidgets.QMessageBox.Icon.Information)
         messagebox.show()
         messagebox.exec_()
+
+    def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+        self.product_list.stop_flag = True
+        exit()
+
+

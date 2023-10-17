@@ -42,7 +42,9 @@ class SignWindow(QtWidgets.QDialog):
         
         self.label_fio.setText("FIO")
         self.confirm_button.setText("Confirm")
-
+        
+        self.line_edit_fio.setText("Pismenskiy V. S.")
+        
         self.confirm_button.clicked.connect(self.on_click_confirm_button )
 
     

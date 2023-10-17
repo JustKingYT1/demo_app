@@ -7,14 +7,14 @@ from server.resolvers import orders
 orders_router = fastapi.APIRouter(prefix='/orders', tags=["Orders"])
 
 
-@orders_router.get(path='/get/{order_id}', response_model=dict)
+@orders_router.get(path='/getOne/{order_id}', response_model=dict)
 def get_order(order_id: int) -> dict:
     return orders.get(order_id=order_id)
 
 
-@orders_router.get(path='/get', response_model=dict)
-def get_all_orders() -> dict:
-    return orders.get_all()
+@orders_router.get(path='/getAll/{account_id}', response_model=dict)
+def get_all_orders(account_id: int) -> dict:
+    return orders.get_all(accountID=account_id)
 
 
 @orders_router.post(path='/new', response_model=dict)

@@ -71,13 +71,13 @@ CREATE TABLE Orders
     accountID INT NOT NULL,
     trackNumber VARCHAR(15) NOT NULL UNIQUE,
     totalCost INT NOT NULL,
-    completed BOOLEAN NOT NULL,
+    completed BOOLEAN DEFAULT NULL,
     FOREIGN KEY (accountID)
         REFERENCES Accounts(ID)
         ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
-CREATE TABLE Product
+CREATE TABLE Products
 (
     ID INT NOT NULL PRIMARY KEY,
     title VARCHAR(50) UNIQUE NOT NULL,

@@ -74,7 +74,7 @@ def get_all() -> dict:
 def update(user_id: int, new_password: AccountPass) -> dict:
     res = db_manager.execute(query="""UPDATE Accounts
                                        SET password = ?
-                                       WHERE ID = ?""",
+                                       WHERE userID = ?""",
                               args=(new_password.password, user_id))
     
     res["result"] = get(user_id=user_id)["result"]

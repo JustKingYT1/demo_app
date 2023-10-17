@@ -33,11 +33,14 @@ def get(order_id: int) -> dict:
 
     return res
 
-def get_all() -> dict:
+def get_all(accountID: int) -> dict:
     res = db_manager.execute(query="""SELECT * 
-                                       FROM Orders""", 
-                              many=True)
-
+                                       FROM Orders
+                                        WHERE accountID = ?
+                                       """,
+                             args=(accountID,),
+                             many=True)
+    print(res)
     list_orders = []
 
     if res["result"]:

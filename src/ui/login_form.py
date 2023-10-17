@@ -5,6 +5,8 @@ from PySide6 import QtWidgets, QtCore, QtGui
 class LoginWindow(QtWidgets.QDialog):
     def __init__(self, parent) -> None:
         super().__init__(parent=parent)
+        print(parent)
+        self.parent = parent
         self.__initUI()
         self.__settingUI()
         self.show()
@@ -56,7 +58,7 @@ class LoginWindow(QtWidgets.QDialog):
 
         self.line_edit_userID.setReadOnly(True)
 
-        self.line_edit_userID.setText(str(self.parent().session.user.userID))
+        self.line_edit_userID.setText(str(self.parent.session.user.userID))
        
         self.line_edit_password.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
         
@@ -82,21 +84,23 @@ class LoginWindow(QtWidgets.QDialog):
         if not self.data_is_valid():
             return
         
-        self.parent().session.login(login=self.line_edit_login.text(), password=self.line_edit_password.text())
+        self.parent.session.login(login=self.line_edit_login.text(), password=self.line_edit_password.text())
         
-        if self.parent().session.error:
-            return self.parent().show_message(
-                text=self.parent().session.error,
+        if self.parent.session.error:
+            return self.parent.show_message(
+                text=self.parent.session.error,
                 error=True,
                 parent=self
             )
 
-        if self.parent().session.auth:
-            self.parent().show_message(
+        if self.parent.session.auth:
+            self.parent.show_message(
                 text='Successful login',
                 error=False,
                 parent=self
             )
+
+        self.parent.authorization()
 
         self.close()
         

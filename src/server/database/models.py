@@ -1,9 +1,17 @@
 from pydantic import BaseModel
 from typing import Optional
+from datetime import date
 
 
 class ModifyBaseModel(BaseModel):
     ID: int
+
+
+class Users(ModifyBaseModel):
+    typeID: int
+    FIO: str
+    phone: str
+    date_birth: str
 
 
 class AccountPass(BaseModel):
@@ -18,6 +26,15 @@ class AccountLog(AccountPass):
     login: str
 
 
+class ProductsGet(BaseModel):
+    title: Optional[str]
+
+
+class Products(ModifyBaseModel):
+    title: str
+    cost: int
+
+
 class Accounts(BaseModel):
     userID: int
     login: str
@@ -26,6 +43,7 @@ class Accounts(BaseModel):
 
 class UserAccount(Accounts):
     access_level: int
+
 
 class Orders(ModifyBaseModel):
     accountID: int

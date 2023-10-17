@@ -7,7 +7,7 @@ class Session:
             userID=-1,
             login='',
             password='',
-            access_level=0
+            access_level=-1
         )
     error: str = None
     server_available: bool = False
@@ -53,8 +53,7 @@ class Session:
                 self.auth = True
 
     def update(self, password: str):
-        answer: dict = resolvers.update(AccountPass(password=password), userID=self.user.userID)
-
+        answer: dict = resolvers.update(AccountPass(password=str(password)), userID=self.user.userID)
         match answer["code"]:
             case 400:
                 self.error = answer["msg"]

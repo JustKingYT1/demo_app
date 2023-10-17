@@ -8,6 +8,7 @@ from src.server.database.models import UserAccount
 class RegisterWindow(QtWidgets.QDialog):
     def __init__(self, parent) -> None:
         super().__init__(parent=parent)
+        self.parent = parent
         self.__initUI()
         self.__settingUI()
         self.show()
@@ -71,8 +72,8 @@ class RegisterWindow(QtWidgets.QDialog):
         self.line_edit_userID.setReadOnly(True)
         self.line_edit_access_level.setReadOnly(True)
 
-        self.line_edit_userID.setText(str(self.parent().session.user.userID))
-        self.line_edit_access_level.setText(str(self.parent().session.user.access_level))
+        self.line_edit_userID.setText(str(self.parent.session.user.userID))
+        self.line_edit_access_level.setText(str(self.parent.session.user.access_level))
 
         self.line_edit_password.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
         self.line_edit_confirm.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
@@ -91,12 +92,12 @@ class RegisterWindow(QtWidgets.QDialog):
 
     def data_is_valid(self) -> bool:
         if self.line_edit_password.text() != self.line_edit_confirm.text():
-            self.parent().show_message(text="Incorrect confirm password", error=True, parent=self)
+            self.parent.show_message(text="Incorrect confirm password", error=True, parent=self)
             return False
         
         for x in (self.line_edit_login, self.line_edit_password):
             if x.text() == "":
-                self.parent().show_message(text="One or more fields are empty", error=True, parent=self)
+                self.parent.show_message(text="One or more fields are empty", error=True, parent=self)
                 return False
             
         return True
@@ -105,22 +106,22 @@ class RegisterWindow(QtWidgets.QDialog):
         if not self.data_is_valid():
             return
         
-        self.parent().session.register(login=self.line_edit_login.text(), password=self.line_edit_password.text()),
+        self.parent.session.register(login=self.line_edit_login.text(), password=self.line_edit_password.text()),
 
-        if self.parent().session.error:
-            return self.parent().show_message(
-                text=self.parent().session.error,
+        if self.parent.session.error:
+            return self.parent.show_message(
+                text=self.parent.session.error,
                 error=True,
                 parent=self
             )
 
-        if self.parent().session.auth:
-            self.parent().show_message(
+        if self.parent.session.auth:
+            self.parent.show_message(
                 text='Successful register',
                 error=False,
                 parent=self
             )
         
-        self.parent().open_login_dialog()
+        self.parent.authorization_menu.open_login_dialog()
         self.close()
         
