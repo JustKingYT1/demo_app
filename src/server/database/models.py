@@ -35,6 +35,12 @@ class Products(ModifyBaseModel):
     cost: int
 
 
+class ProductListForClient(BaseModel):
+    title: str
+    cost: int
+    count: int
+
+
 class Accounts(BaseModel):
     userID: int
     login: str

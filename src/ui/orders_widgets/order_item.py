@@ -52,7 +52,7 @@ class OrderItem(QtWidgets.QWidget):
         self.total_cost.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
         self.completed.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
 
-        self.setFixedHeight(65)
+        self.setFixedHeight(75)
 
         self.open_button.clicked.connect(self.on_open_button_click)
 

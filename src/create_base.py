@@ -1,5 +1,5 @@
 from server.database.db_manager import db_manager
 import settings 
 
-# db_manager.create_base(f"{settings.SCRIPTS_DIR}/base.sql")
-db_manager.create_base(f"{settings.SCRIPTS_DIR}/data.sql")
+
+print(db_manager.create_base(script_path_tables=f"{settings.SCRIPTS_DIR}/base.sql", script_path_data=f"{settings.SCRIPTS_DIR}/data.sql"))

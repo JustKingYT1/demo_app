@@ -1,6 +1,8 @@
 from server.database.db_manager import db_manager
 
-from server.database.models import ListProducts, ListProductsUpd, ListProductsDelOrGet
+from server.database.models import ListProducts, ListProductsUpd, ListProductsDelOrGet, ProductListForClient
+
+
 def new(product: ListProducts) -> dict:
     res = db_manager.execute(query="""INSERT INTO ListProducts(orderID, productID, count) 
                                           VALUES(?, ?, ?) 
@@ -19,20 +21,22 @@ def new(product: ListProducts) -> dict:
     
 
 def get(order_id: int) -> dict:
-    res = db_manager.execute(query="""SELECT * 
-                                       FROM ListProducts 
-                                       WHERE orderID = ?""", 
+    res = db_manager.execute(query="""SELECT p.title, lp.count, p.cost
+                                       FROM ListProducts lp
+                                       INNER JOIN Product p
+                                       ON  lp.productID = p.ID
+                                       WHERE lp.orderID = ?""",
                               args=(order_id,),
                               many=True) 
-    
+
     list_products_lists = []
 
     if res["result"]:
         for list_products in res["result"]:
-            list_products_lists.append(ListProducts(
-                orderID=list_products[1],
-                productID=list_products[2],
-                count=list_products[3]))
+            list_products_lists.append(ProductListForClient(
+                title=list_products[0],
+                cost=list_products[1],
+                count=list_products[2]))
             
     res["result"] = None if len(list_products_lists) == 0 else list_products_lists
 

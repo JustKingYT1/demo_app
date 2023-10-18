@@ -59,8 +59,9 @@ class ProductsList(QtWidgets.QWidget):
         self.update_products(products)
     
     def update_products(self, products=get_all_products()["result"]) -> None:
-        self.clear_products()
-        threading.Thread(target=lambda: self.load_products(products)).start()
+        if products:
+            self.clear_products()
+            threading.Thread(target=lambda: self.load_products(products)).start()
 
     def load_products(self, products) -> None:
         for product in [products] if type(products) == dict else products:

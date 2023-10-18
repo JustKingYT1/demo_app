@@ -59,8 +59,9 @@ class OrdersList(QtWidgets.QWidget):
         self.update_orders(orders)
 
     def update_orders(self, orders) -> None:
-        self.clear_orders()
-        threading.Thread(target=lambda: self.load_orders(orders)).start()
+        if orders:
+            self.clear_orders()
+            threading.Thread(target=lambda: self.load_orders(orders)).start()
 
     def load_orders(self, orders) -> None:
         for order in [orders] if type(orders) == dict else orders:
