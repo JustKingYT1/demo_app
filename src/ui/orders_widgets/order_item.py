@@ -37,6 +37,23 @@ class OrderItem(QtWidgets.QWidget):
         self.total_cost.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.completed.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
+        
+        # self.setFrameShape(QtWidgets.QFrame.Shape.Box)
+        self.orderID.setFrameShape(QtWidgets.QFrame.Shape.Box)
+        self.userID.setFrameShape(QtWidgets.QFrame.Shape.Box)
+        self.track_number.setFrameShape(QtWidgets.QFrame.Shape.Box)
+        self.total_cost.setFrameShape(QtWidgets.QFrame.Shape.Box)
+        self.completed.setFrameShape(QtWidgets.QFrame.Shape.Box)
+
+        # self.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
+        self.orderID.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
+        self.userID.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
+        self.track_number.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
+        self.total_cost.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
+        self.completed.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
+
+        self.setFixedHeight(65)
+
         self.open_button.clicked.connect(self.on_open_button_click)
 
 

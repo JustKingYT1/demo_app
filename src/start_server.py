@@ -14,3 +14,6 @@ def start_page() -> RedirectResponse:
 
 def start_server() -> None:
     uvicorn.run(app='start_server:app', reload=True, host=settings.HOST, port=settings.PORT)
+
+# if __name__ == "__main__": 
+#     uvicorn.run(app='start_server:app', reload=True, host=settings.HOST, port=settings.PORT)

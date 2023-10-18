@@ -1,7 +1,4 @@
 from PySide6 import QtCore, QtWidgets, QtGui
-import PySide6.QtGui
-import uvicorn
-import settings
 from ui.api import resolvers
 from src.ui.api.session import Session
 from ui.dialog_forms.sign_in_form import SignWindow
@@ -12,6 +9,7 @@ from ui.main_widgets.tools import include_widgets
 from ui.main_widgets.authorization_menu import AuthorizationMenu
 from ui.main_widgets.user_profile import UserProfile
 import multiprocessing
+from ui.api.resolvers import get_all_orders
 import sys
 import time
 
@@ -26,7 +24,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         self.server_process = multiprocessing.Process(target=start_server)
         self.server_process.start()
-        time.sleep(6)
+        time.sleep(7)
         if self.__connect_check():
             if self.__connect_check()["code"] == 400:
                 self.server_process.terminate()
@@ -83,7 +81,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.page_list.orders_item.bind_widget(self.orders_list)
 
         self.product_list.update_products()
-        self.orders_list.update_orders()
+        self.orders_list.update_orders(get_all_orders(self.session.user.userID)["result"])
 
         include_widgets(main_win=self, elements=self.__dict__)
 

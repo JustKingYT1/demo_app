@@ -54,6 +54,7 @@ class Orders(ModifyBaseModel):
 
 class OrderTrackNum(BaseModel):
     track_number: str
+    userID: int
 
 
 class OrderComplete(BaseModel):

@@ -4,6 +4,7 @@ from ui.api.resolvers import get_all_products, get_product
 from ui.product_widgets.product_item import ProductItem
 import threading
 
+
 class ProductsList(QtWidgets.QWidget):
     stop_flag = None
     add_product_signal: QtCore.Signal = QtCore.Signal(int, str, int)
@@ -56,7 +57,6 @@ class ProductsList(QtWidgets.QWidget):
     def on_find_button_click(self) -> None:
         products = get_product(self.product_search_line_edit.text())["result"]
         self.update_products(products)
-        
     
     def update_products(self, products=get_all_products()["result"]) -> None:
         self.clear_products()

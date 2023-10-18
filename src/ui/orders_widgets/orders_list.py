@@ -1,8 +1,9 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 from ui.main_widgets.tools import get_pixmap_path, include_widgets
-from ui.api.resolvers import get_all_orders
+from ui.api.resolvers import get_all_orders, get_order
 from ui.orders_widgets.order_item import OrderItem
 import threading
+
 
 class OrdersList(QtWidgets.QWidget):
     stop_flag = None
@@ -48,24 +49,24 @@ class OrdersList(QtWidgets.QWidget):
 
         self.search_button.clicked.connect(self.on_find_button_click)
         self.add_order_signal.connect(self.add_order_slot)
-
-    def validate_data(self) -> bool:
-        return True if self.order_search_line_edit.text().isdigit() else False
     
+    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
+        if event.key() == QtCore.Qt.Key.Key_Return.numerator:
+            self.on_find_button_click()
+
     def on_find_button_click(self) -> None:
-        if not self.validate_data():
-            self.parent().show_message(text="Search field must contains integer value", error=True, parent=self)
-            return
-    
-    def update_orders(self) -> None:
-        self.clear_orders()
-        threading.Thread(target=self.load_orders).start()
+        orders = get_order(self.order_search_line_edit.text(), self.parent.session.user.userID)["result"]
+        self.update_orders(orders)
 
-    def load_orders(self) -> None:
-        for order in get_all_orders(self.parent.session.user.userID)["result"]:
+    def update_orders(self, orders) -> None:
+        self.clear_orders()
+        threading.Thread(target=lambda: self.load_orders(orders)).start()
+
+    def load_orders(self, orders) -> None:
+        for order in [orders] if type(orders) == dict else orders:
             if self.stop_flag:
                 exit()
-            print(order)
+
             self.add_order_signal.emit(
                 order["ID"],
                 order["accountID"],

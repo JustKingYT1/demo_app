@@ -22,27 +22,37 @@ def server_available(func):
     return need_it
 
 @server_available
+def get_order(track_number: str, userID: int) -> None:
+    return requests.post(url=f'{settings.URL}/orders/getOne', data=f'{{"track_number": "{track_number}", "userID": "{userID}"}}').json()
+
+
+@server_available
 def get_access_level(user_id: int) -> int | dict:
     return requests.get(url=f'{settings.URL}/users/get/{user_id}').json()
+
 
 @server_available
 def get_all_products() -> dict:
     return requests.get(url=f"{settings.URL}/products/get").json()
+
 
 @server_available
 def get_userID(data: SignIn) -> dict:
     user = f'{{"FIO": "{data.FIO}"}}'
     return requests.post(url=f'{settings.URL}/accounts/sign', data=user).json()
 
+
 @server_available
 def register(user: Accounts) -> dict:
     data = f'{{"userID": "{user.userID}", "login": "{user.login}", "password": "{user.password}"}}'
     return requests.post(url=f'{settings.URL}/accounts/new', data=data).json()
 
+
 @server_available
 def login(user: Accounts) -> dict:
     data = f'{{"userID": "{user.userID}", "login": "{user.login}", "password": "{user.password}"}}'
     return requests.post(url=f'{settings.URL}/accounts/login', data=data).json()
+
 
 @server_available
 def update(password: AccountPass, userID: int) -> dict:
@@ -53,6 +63,7 @@ def update(password: AccountPass, userID: int) -> dict:
 @server_available
 def get_all_orders(userID: int) -> dict:
     return requests.get(url=f'{settings.URL}/orders/getAll/{userID}').json()
+
 
 @server_available
 def get_product(title: str) -> dict:

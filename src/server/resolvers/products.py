@@ -8,7 +8,7 @@ def new(order: Products) -> dict:
                                           RETURNING ID""", 
                               args=(order.ID, order.accountID, order.track_number, order.total_cost, order.completed))
     
-    res["result"] = None if not res["result"] else get(res["result"][0])["result"]
+    # res["result"] = None if not res["result"] else get(res["result"][0])["result"]
 
     return res
 
