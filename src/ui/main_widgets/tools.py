@@ -1,6 +1,5 @@
 from src.settings import IMAGE_DIR
 from PySide6 import QtWidgets
-from ui.product_item import ProductItem
 
 def get_pixmap_path(pixmap: str) -> str:
     return f'{IMAGE_DIR}/{pixmap}'

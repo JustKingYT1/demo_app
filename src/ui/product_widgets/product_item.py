@@ -1,7 +1,7 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 
 
-class ProductItem(QtWidgets.QWidget):
+class ProductItem(QtWidgets.QFrame):
     def __init__(self, parent) -> None:
         super().__init__(parent=parent)
         self.__initUI()
@@ -19,7 +19,7 @@ class ProductItem(QtWidgets.QWidget):
     def __settingUI(self) -> None:
         self.setLayout(self.main_h_layout)
         self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
-
+        
         self.main_h_layout.addWidget(self.product_id)
         self.main_h_layout.addWidget(self.name)
         self.main_h_layout.addWidget(self.cost)
@@ -34,6 +34,17 @@ class ProductItem(QtWidgets.QWidget):
 
         self.buy_button.setFixedWidth(40)
 
+        # self.setFrameShape(QtWidgets.QFrame.Shape.Box)
+        self.name.setFrameShape(QtWidgets.QFrame.Shape.Box)
+        self.cost.setFrameShape(QtWidgets.QFrame.Shape.Box)
+        self.product_id.setFrameShape(QtWidgets.QFrame.Shape.Box)
+
+        # self.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
+        self.name.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
+        self.product_id.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
+        self.cost.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
+
+        self.setFixedHeight(80)
 
     def set_product_info(self, name: str, cost: int, productID: int) -> None:
         self.product_id.setText(str(productID))

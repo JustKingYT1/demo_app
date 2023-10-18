@@ -60,3 +60,8 @@ class Session:
 
             case 200:
                 self.error = None
+
+    def leave(self) -> None:
+        self.user.access_level = -1
+        self.user.login = ''
+        self.user.password = ''

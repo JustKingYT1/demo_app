@@ -2,8 +2,8 @@ from typing import Optional
 from PySide6 import QtWidgets, QtCore, QtGui
 import PySide6.QtCore
 import PySide6.QtWidgets
-from ui.register_form import RegisterWindow
-from ui.login_form import LoginWindow
+from ui.dialog_forms.register_form import RegisterWindow
+from ui.dialog_forms.login_form import LoginWindow
 
 
 class AuthorizationMenu(QtWidgets.QWidget):

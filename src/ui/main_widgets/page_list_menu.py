@@ -1,5 +1,5 @@
 from PySide6 import QtWidgets, QtCore, QtGui
-from ui.menu_item import MenuItem
+from ui.main_widgets.menu_item import MenuItem
 
 
 class PageListMenu(QtWidgets.QWidget):

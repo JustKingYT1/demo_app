@@ -72,7 +72,7 @@ class LoginWindow(QtWidgets.QDialog):
     def data_is_valid(self) -> bool:
         for x in (self.line_edit_login, self.line_edit_password):
             if x.text() == "":
-                self.parent().show_message(text="One or more fields are empty", error=True, parent=self)
+                self.parent.show_message(text="One or more fields are empty", error=True, parent=self)
                 return False
             
         return True

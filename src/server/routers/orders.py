@@ -1,15 +1,15 @@
 import fastapi
 
-from server.database.models import Orders, OrderComplete
+from server.database.models import Orders, OrderComplete, OrderTrackNum
 from server.resolvers import orders
 
 
 orders_router = fastapi.APIRouter(prefix='/orders', tags=["Orders"])
 
 
-@orders_router.get(path='/getOne/{order_id}', response_model=dict)
-def get_order(order_id: int) -> dict:
-    return orders.get(order_id=order_id)
+@orders_router.post(path='/getOne', response_model=dict)
+def get_order(order: OrderTrackNum) -> dict:
+    return orders.get(order=order)
 
 
 @orders_router.get(path='/getAll/{account_id}', response_model=dict)

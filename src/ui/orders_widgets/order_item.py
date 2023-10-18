@@ -16,6 +16,8 @@ class OrderItem(QtWidgets.QWidget):
         self.total_cost = QtWidgets.QLabel()
         self.completed = QtWidgets.QLabel()
 
+        self.open_button = QtWidgets.QPushButton()
+
     def __settingUI(self) -> None:
         self.setLayout(self.main_h_layout)
         self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
@@ -25,6 +27,7 @@ class OrderItem(QtWidgets.QWidget):
         self.main_h_layout.addWidget(self.track_number)
         self.main_h_layout.addWidget(self.total_cost)
         self.main_h_layout.addWidget(self.completed)
+        self.main_h_layout.addWidget(self.open_button)
 
         self.completed.setText('False')
 
@@ -34,6 +37,8 @@ class OrderItem(QtWidgets.QWidget):
         self.total_cost.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.completed.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
+        self.open_button.clicked.connect(self.on_open_button_click)
+
 
     def set_order_info(self, order_id: int, user_id: int, track_number: str, total_cost: int, completed: bool) -> None:
         self.orderID.setText(str(order_id))
@@ -41,3 +46,9 @@ class OrderItem(QtWidgets.QWidget):
         self.track_number.setText(str(track_number))
         self.total_cost.setText(str(total_cost))
         self.completed.setText(str(completed))
+
+    def on_open_button_click(self) -> None:
+        self.open_order_form()
+
+    def open_order_form(self) -> None:
+        pass

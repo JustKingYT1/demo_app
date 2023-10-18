@@ -13,31 +13,23 @@ def new(order: Products) -> dict:
     return res
 
 def get(product: ProductsGet) -> dict:
-    res = db_manager.execute(query='''SELECT * 
+    res = db_manager.execute(query=f'''SELECT * 
                                        FROM Product 
-                                       WHERE title LIKE "?%"''' if not product.title == '' else """SELECT * 
-                                                                                            FROM Product""", 
-                              args=(product.title,) if not product.title == '' else (),
+                                       WHERE title LIKE ?''' if not product.title == '' else """SELECT * 
+                                                                                            FROM Product""",
+                             args=(f'{product.title}%',) if not product.title == '' else (),
                               many=True) 
-    print(res)
+
     list_products = []
 
     if res["result"]:
-        if product.title == '':
-            for product in res["result"]:
-                list_products.append(Products(
-                    ID=product[0],
-                    title=product[1],
-                    cost=product[2]
-                ))
-            res["result"] = None if len(list_products) == 0 else list_products
-        else:
-            print(res)
-            res["result"] = Products(
-                                                ID=res["result"][0][0],
-                                                title=res["result"][0][1],
-                                                cost=res["result"][0][2]
-                                            )
+        for product in res["result"]:
+            list_products.append(Products(
+                ID=product[0],
+                title=product[1],
+                cost=product[2]
+            ))
+        res["result"] = None if len(list_products) == 0 else list_products
 
     if res["result"] is None:
             res["msg"] = "Not found"

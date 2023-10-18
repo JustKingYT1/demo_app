@@ -1,8 +1,7 @@
 from PySide6 import QtWidgets, QtCore, QtGui
-from ui.tools import get_pixmap_path
+from ui.main_widgets.tools import get_pixmap_path, include_widgets
 from ui.api.resolvers import get_all_orders
-from ui.tools import include_widgets
-from ui.order_item import OrderItem
+from ui.orders_widgets.order_item import OrderItem
 import threading
 
 class OrdersList(QtWidgets.QWidget):
@@ -24,6 +23,8 @@ class OrdersList(QtWidgets.QWidget):
         self.scroll_widget = QtWidgets.QWidget()
         self.scroll_layout = QtWidgets.QVBoxLayout()
 
+        self.statuslabel = OrderItem(self)
+
     def __settingUI(self) -> None:
         self.setLayout(self.main_v_layout)
         self.main_v_layout.setContentsMargins(0, 0, 0, 0)
@@ -35,6 +36,10 @@ class OrdersList(QtWidgets.QWidget):
         self.scroll_area.setWidget(self.scroll_widget)
         self.scroll_widget.setLayout(self.scroll_layout)
         self.scroll_area.setWidgetResizable(True)
+
+        self.scroll_layout.addWidget(self.statuslabel)
+
+        self.statuslabel.set_order_info('OrderID', 'UserID', 'Track-number', 'Total cost', 'Completed')
 
         self.search_button.setIcon(QtGui.QPixmap(get_pixmap_path("search.png")))
         self.search_button.setFixedSize(24, 24)

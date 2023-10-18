@@ -1,9 +1,7 @@
 from PySide6 import QtWidgets, QtCore, QtGui
-from ui.tools import get_pixmap_path
+from ui.main_widgets.tools import get_pixmap_path, include_widgets
 from ui.api.resolvers import get_all_products, get_product
-from ui.tools import include_widgets
-from server.database.models import Products
-from ui.product_item import ProductItem
+from ui.product_widgets.product_item import ProductItem
 import threading
 
 class ProductsList(QtWidgets.QWidget):
@@ -24,6 +22,8 @@ class ProductsList(QtWidgets.QWidget):
         self.scroll_area = QtWidgets.QScrollArea()
         self.scroll_widget = QtWidgets.QWidget()
         self.scroll_layout = QtWidgets.QVBoxLayout()
+        
+        self.statuslabel = ProductItem(self)
 
     def __settingUI(self) -> None:
         self.setLayout(self.main_v_layout)
@@ -37,6 +37,10 @@ class ProductsList(QtWidgets.QWidget):
         self.scroll_widget.setLayout(self.scroll_layout)
         self.scroll_area.setWidgetResizable(True)
 
+        self.scroll_layout.addWidget(self.statuslabel)
+        
+        self.statuslabel.set_product_info('Name', 'Cost', 'ProductID')
+
         self.search_button.setIcon(QtGui.QPixmap(get_pixmap_path("search.png")))
         self.search_button.setFixedSize(24, 24)
         self.search_button.setProperty("access_level", -1)
@@ -45,16 +49,12 @@ class ProductsList(QtWidgets.QWidget):
         self.search_button.clicked.connect(self.on_find_button_click)
         self.add_product_signal.connect(self.add_product)
 
-    def validate_data(self) -> bool:
-        return True if self.product_search_line_edit.text().isdigit() else False
+    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
+        if event.key() == QtCore.Qt.Key.Key_Return.numerator:
+            self.on_find_button_click()
     
     def on_find_button_click(self) -> None:
-        # if not self.validate_data():
-        #     self.parent.show_message(text="Search field must contains integer value", error=True, parent=self)
-        #     return
-        
         products = get_product(self.product_search_line_edit.text())["result"]
-
         self.update_products(products)
         
     
@@ -63,14 +63,10 @@ class ProductsList(QtWidgets.QWidget):
         threading.Thread(target=lambda: self.load_products(products)).start()
 
     def load_products(self, products) -> None:
-        print(type(products))
-        products = (products,)
-        for product in [products[0]] if type(products[0]) == dict else products[0]:
+        for product in [products] if type(products) == dict else products:
             if self.stop_flag:
                 exit()
-            
-            print(product, type(products[0]) == dict)
-            
+                        
             self.add_product_signal.emit(
                 product["ID"],
                 product["title"],

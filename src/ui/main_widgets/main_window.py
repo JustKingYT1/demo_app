@@ -1,23 +1,35 @@
 from PySide6 import QtCore, QtWidgets, QtGui
 import PySide6.QtGui
+import uvicorn
+import settings
 from ui.api import resolvers
 from src.ui.api.session import Session
-from ui.sign_in_form import SignWindow
-from ui.orders_list import OrdersList
-from ui.page_list_menu import PageListMenu
-from ui.products_list import ProductsList
-from ui.tools import include_widgets
-from ui.authorization_menu import AuthorizationMenu
-from ui.user_profile import UserProfile
+from ui.dialog_forms.sign_in_form import SignWindow
+from ui.orders_widgets.orders_list import OrdersList
+from ui.main_widgets.page_list_menu import PageListMenu
+from ui.product_widgets.products_list import ProductsList
+from ui.main_widgets.tools import include_widgets
+from ui.main_widgets.authorization_menu import AuthorizationMenu
+from ui.main_widgets.user_profile import UserProfile
+import multiprocessing
+import sys
+import time
 
+sys.path.append('C:/demo_app/src')
+
+from start_server import start_server
 
 class MainWindow(QtWidgets.QMainWindow):
     session: Session = Session()
 
     def __init__(self) -> None:
         super().__init__()
+        self.server_process = multiprocessing.Process(target=start_server)
+        self.server_process.start()
+        time.sleep(6)
         if self.__connect_check():
             if self.__connect_check()["code"] == 400:
+                self.server_process.terminate()
                 self.show_message(text=self.__connect_check()["msg"], error=True, parent=self)
                 exit()
         
@@ -27,17 +39,17 @@ class MainWindow(QtWidgets.QMainWindow):
         sign_window.exec_()
 
         if self.session.user.userID == -1:
+            self.server_process.terminate()
             exit()
 
         self.__initUI()
         self.__settingUI()
         self.show()
-            
+    
     @staticmethod
     @resolvers.server_available
     def __connect_check() -> None:
         return None
-    
 
     def __initUI(self) -> None:
         self.central_widget = QtWidgets.QWidget(self)
@@ -89,7 +101,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.user_profile.fill_line_edits()
 
         include_widgets(self, self.__dict__)
-    
+
+    def leave(self) -> None:
+        self.authorization_menu.show()
+        self.user_profile.hide()
+        self.session.leave()
+
+        include_widgets(self, self.__dict__)    
 
     def show_message(self, text: str, error: bool = False, parent=None) -> None:
         messagebox = QtWidgets.QMessageBox(parent=self if not parent else parent)
@@ -102,6 +120,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
         self.product_list.stop_flag = True
+        self.server_process.terminate()
         exit()
 
 

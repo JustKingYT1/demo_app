@@ -33,6 +33,7 @@ class UserProfile(QtWidgets.QWidget):
         self.password_line_edit = QtWidgets.QLineEdit()
         self.confirm_line_edit = QtWidgets.QLineEdit()
 
+        self.leave_button = QtWidgets.QPushButton()
         self.edit_button = QtWidgets.QPushButton()
         self.allow_button = QtWidgets.QPushButton()
 
@@ -65,9 +66,11 @@ class UserProfile(QtWidgets.QWidget):
         self.password_layout.addWidget(self.password_line_edit)
         self.confirm_layout.addWidget(self.confirm_line_edit)
 
+        self.button_layout.addWidget(self.leave_button)
         self.button_layout.addWidget(self.edit_button)
         self.button_layout.addWidget(self.allow_button)
 
+        self.leave_button.setText('Leave')
         self.edit_button.setText('Edit')
         self.allow_button.setText('Allow')
 
@@ -94,6 +97,7 @@ class UserProfile(QtWidgets.QWidget):
 
         self.allow_button.setEnabled(False)
 
+        self.leave_button.clicked.connect(self.on_leave_click)
         self.edit_button.clicked.connect(self.on_edit_click)
         self.allow_button.clicked.connect(self.on_allow_click)
 
@@ -106,6 +110,9 @@ class UserProfile(QtWidgets.QWidget):
         self.access_level_line_edit.setText(str(self.parent.session.user.access_level))
         self.login_line_edit.setText(str(self.parent.session.user.login))  
 
+    def on_leave_click(self) -> None:
+        self.parent.leave()
+
     def on_edit_click(self) -> None:
         self.edit_button.setEnabled(False)
         self.allow_button.setEnabled(True)
@@ -113,13 +120,16 @@ class UserProfile(QtWidgets.QWidget):
         self.set_line_edit_enable(True)
 
     def validate_password(self) -> bool:
+        for x in (self.password_line_edit.text(), self.confirm_line_edit.text()):
+            if x == '':
+                return False
         return self.password_line_edit.text() == self.confirm_line_edit.text()
 
     def on_allow_click(self) -> None:
 
         if not self.validate_password():
             return self.parent.show_message(
-                text='Incorrect confirm password',
+                text='Incorrect confirm password or one or more fields is empty',
                 error=True,
                 parent=self
             )
@@ -134,5 +144,7 @@ class UserProfile(QtWidgets.QWidget):
             )
 
         self.set_line_edit_enable(False)
+        self.password_line_edit.setText('')
+        self.confirm_line_edit.setText('')
         self.allow_button.setEnabled(False)
         self.edit_button.setEnabled(True)

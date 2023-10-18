@@ -1,5 +1,5 @@
 from PySide6 import QtWidgets, QtCore, QtGui
-from ui.tools import get_pixmap_path
+from ui.main_widgets.tools import get_pixmap_path
 
 class MenuItem(QtWidgets.QFrame):
     connection_def = None

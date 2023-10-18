@@ -12,6 +12,5 @@ app = FastAPI(title='Shesterochka', version='0.1 Alpha')
 def start_page() -> RedirectResponse:
     return RedirectResponse('/docs')
 
-
-if __name__ == "__main__": 
+def start_server() -> None:
     uvicorn.run(app='start_server:app', reload=True, host=settings.HOST, port=settings.PORT)

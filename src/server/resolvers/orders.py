@@ -1,6 +1,6 @@
 from server.database.db_manager import db_manager
 
-from server.database.models import Orders, OrderComplete
+from server.database.models import Orders, OrderComplete, OrderTrackNum
 
 def new(order: Orders) -> dict:
     res = db_manager.execute(query="""INSERT INTO Orders(ID, accountID, trackNumber, totalCost, completed) 
@@ -12,11 +12,11 @@ def new(order: Orders) -> dict:
 
     return res
 
-def get(order_id: int) -> dict:
+def get(order: OrderTrackNum) -> dict:
     res = db_manager.execute(query="""SELECT * 
                                        FROM Orders 
-                                       WHERE ID = ?""", 
-                              args=(order_id,)) 
+                                       WHERE track_number""", 
+                              args=(order.track_number,)) 
     
     res["result"] = None if not res["result"] else Orders(
         ID=res["result"][0],
@@ -33,6 +33,7 @@ def get(order_id: int) -> dict:
 
     return res
 
+
 def get_all(accountID: int) -> dict:
     res = db_manager.execute(query="""SELECT * 
                                        FROM Orders
@@ -40,7 +41,7 @@ def get_all(accountID: int) -> dict:
                                        """,
                              args=(accountID,),
                              many=True)
-    print(res)
+    
     list_orders = []
 
     if res["result"]:

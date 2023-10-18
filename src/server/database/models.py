@@ -52,6 +52,10 @@ class Orders(ModifyBaseModel):
     completed: bool = False
 
 
+class OrderTrackNum(BaseModel):
+    track_number: str
+
+
 class OrderComplete(BaseModel):
     completed: bool
 
