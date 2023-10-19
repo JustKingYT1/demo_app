@@ -15,33 +15,19 @@ def new(order: Orders) -> dict:
 def get(order: OrderTrackNum) -> dict:
     res = db_manager.execute(query="""SELECT * 
                                        FROM Orders 
-                                       WHERE trackNumber = ? AND accountID = ?""" if not order.track_number == '' else '''SELECT * FROM Orders WHERE accountID = ?''', 
-                              args=(order.track_number, order.userID) if not order.track_number == '' else (order.userID,),
-                              many=True) 
+                                       WHERE trackNumber = ? AND accountID = ?""", 
+                              args=(order.track_number, order.userID)) 
     
-    print(res)
+    res["result"] = None if not res["result"] else Orders(
+        ID=res["result"][0],
+        accountID=res["result"][1],
+        track_number=res["result"][2],
+        total_cost=res["result"][3],
+        completed=res["result"][4]
+    )
+
     if order.track_number == '':
-        list_orders = []
-
-        if res["result"]:
-            for order in res["result"]:
-                list_orders.append(Orders(
-                    ID=order[0],
-                    accountID=order[1],
-                    track_number=order[2],
-                    total_cost=order[3],
-                    completed=order[4]
-                ))
-
-        res["result"] = None if len(list_orders) == 0 else list_orders
-    else:
-        res["result"] = None if not res["result"] else Orders(
-            ID=res["result"][0][0],
-            accountID=res["result"][0][1],
-            track_number=res["result"][0][2],
-            total_cost=res["result"][0][3],
-            completed=res["result"][0][4]
-        )
+        res = get_all(order.userID)
 
     if res["result"] is None:
             res["msg"] = "Not found"

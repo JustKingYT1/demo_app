@@ -79,6 +79,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.page_list.product_item.bind_widget(self.product_list)
         self.page_list.users_item.bind_widget(self.product_list)
         self.page_list.orders_item.bind_widget(self.orders_list)
+        self.page_list.cart_item.bind_widget(self.orders_list)
 
         self.product_list.update_products()
         self.orders_list.update_orders(get_all_orders(self.session.user.userID)["result"])
@@ -104,6 +105,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.authorization_menu.show()
         self.user_profile.hide()
         self.session.leave()
+        self.page_list.product_item.switch_page()
 
         include_widgets(self, self.__dict__)    
 

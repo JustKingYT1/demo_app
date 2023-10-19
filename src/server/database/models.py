@@ -7,6 +7,12 @@ class ModifyBaseModel(BaseModel):
     ID: int
 
 
+class Warehouses(BaseModel):
+    name: str
+    locationID: int
+    phone: str
+
+
 class Users(ModifyBaseModel):
     typeID: int
     FIO: str
@@ -27,7 +33,7 @@ class AccountLog(AccountPass):
 
 
 class ProductsGet(BaseModel):
-    title: Optional[str]
+    title: str
 
 
 class Products(ModifyBaseModel):

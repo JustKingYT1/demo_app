@@ -12,10 +12,9 @@ def get_order(order: OrderTrackNum) -> dict:
     return orders.get(order=order)
 
 
-@orders_router.get(path='/getAll/{account_id}', response_model=dict)
-def get_all_orders(account_id: int) -> dict:
-    return orders.get_all(accountID=account_id)
-
+@orders_router.get(path='/getAll/{userID}', response_model=dict)
+def get_all_orders(userID: int) -> dict:
+    return orders.get_all(accountID=userID)
 
 @orders_router.post(path='/new', response_model=dict)
 def new_order(order: Orders) -> dict:

@@ -42,6 +42,8 @@ class ProductsList(QtWidgets.QWidget):
         
         self.statuslabel.set_product_info('Name', 'Cost', 'ProductID')
 
+        self.statuslabel.buy_button.setProperty('access_level', 10)
+
         self.search_button.setIcon(QtGui.QPixmap(get_pixmap_path("search.png")))
         self.search_button.setFixedSize(24, 24)
         self.search_button.setProperty("access_level", -1)
@@ -55,12 +57,12 @@ class ProductsList(QtWidgets.QWidget):
             self.on_find_button_click()
     
     def on_find_button_click(self) -> None:
-        products = get_product(self.product_search_line_edit.text())["result"]
+        products = get_product(self.product_search_line_edit.text())['result']
         self.update_products(products)
     
     def update_products(self, products=get_all_products()["result"]) -> None:
+        self.clear_products()
         if products:
-            self.clear_products()
             threading.Thread(target=lambda: self.load_products(products)).start()
 
     def load_products(self, products) -> None:

@@ -1,4 +1,5 @@
 from PySide6 import QtWidgets, QtCore, QtGui
+from src.ui.main_widgets.tools import get_pixmap_path
 
 
 class ProductItem(QtWidgets.QFrame):
@@ -25,13 +26,15 @@ class ProductItem(QtWidgets.QFrame):
         self.main_h_layout.addWidget(self.cost)
         self.main_h_layout.addWidget(self.buy_button)
 
-        self.buy_button.setText("Buy")
-        self.buy_button.setProperty("access_level", 1)
+        self.buy_button.setFixedSize(24, 24)
+        self.buy_button.setProperty("access_level", 0)
+        self.buy_button.setIcon(QtGui.QPixmap(get_pixmap_path('buy.png')))
 
         self.product_id.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.name.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.cost.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
+        self.buy_button.setFixedHeight(40)
         self.buy_button.setFixedWidth(40)
 
         # self.setFrameShape(QtWidgets.QFrame.Shape.Box)
@@ -55,6 +58,3 @@ class ProductItem(QtWidgets.QFrame):
 
     def buy_product(self, productID: int) -> None:
         pass
-
-    def product_updated(self) -> None:
-        self.parent().update_products()

@@ -41,6 +41,7 @@ class OrdersList(QtWidgets.QWidget):
         self.scroll_layout.addWidget(self.statuslabel)
 
         self.statuslabel.set_order_info('OrderID', 'UserID', 'Track-number', 'Total cost', 'Completed')
+        self.statuslabel.open_button.setProperty('access_level', 10)
 
         self.search_button.setIcon(QtGui.QPixmap(get_pixmap_path("search.png")))
         self.search_button.setFixedSize(24, 24)
@@ -56,11 +57,12 @@ class OrdersList(QtWidgets.QWidget):
 
     def on_find_button_click(self) -> None:
         orders = get_order(self.order_search_line_edit.text(), self.parent.session.user.userID)["result"]
+        print(orders)
         self.update_orders(orders)
 
     def update_orders(self, orders) -> None:
+        self.clear_orders()
         if orders:
-            self.clear_orders()
             threading.Thread(target=lambda: self.load_orders(orders)).start()
 
     def load_orders(self, orders) -> None:

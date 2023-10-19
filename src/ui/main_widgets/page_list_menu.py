@@ -13,6 +13,7 @@ class PageListMenu(QtWidgets.QWidget):
         self.product_item = MenuItem(self)
         self.users_item = MenuItem(self)
         self.orders_item = MenuItem(self)
+        self.cart_item = MenuItem(self)
 
     def __settingUI(self) -> None:
         self.setMaximumWidth(150)
@@ -26,11 +27,15 @@ class PageListMenu(QtWidgets.QWidget):
         self.product_item.setup(icon_name='product.png', title="Products")
         self.users_item.setup(icon_name='users.png', title="Users")
         self.orders_item.setup(icon_name='orders.png', title='Orders')
+        self.cart_item.setup(icon_name='cart.png', title='Cart')
+
 
         self.main_h_layout.addWidget(self.product_item)
+        self.main_h_layout.addWidget(self.cart_item)
         self.main_h_layout.addWidget(self.orders_item)
         self.main_h_layout.addWidget(self.users_item)
 
         self.product_item.setProperty("access_level", -1)
         self.orders_item.setProperty('access_level', 0)
+        self.cart_item.setProperty('access_level', 0)
         self.users_item.setProperty("access_level", 2)

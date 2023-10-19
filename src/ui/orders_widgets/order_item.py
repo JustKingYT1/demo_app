@@ -36,8 +36,9 @@ class OrderItem(QtWidgets.QWidget):
         self.track_number.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.total_cost.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.completed.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-
         
+        self.open_button.setText('Open')
+
         # self.setFrameShape(QtWidgets.QFrame.Shape.Box)
         self.orderID.setFrameShape(QtWidgets.QFrame.Shape.Box)
         self.userID.setFrameShape(QtWidgets.QFrame.Shape.Box)
