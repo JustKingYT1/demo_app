@@ -9,7 +9,9 @@ listProducts_router = fastapi.APIRouter(prefix='/listProducts', tags=["ListProdu
 
 @listProducts_router.get(path='/get/{order_id}', response_model=dict)
 def get_list_products(order_id: int) -> dict:
-    return list_products.get(order_id=order_id)
+    res = list_products.get(order_id=order_id)
+    print(res)
+    return res
 
 @listProducts_router.get(path='/get/{order_id}/{product_id}', response_model=dict)
 def get_one_product_in_list_products_in_order(order_id: int, product_id: int) -> dict:

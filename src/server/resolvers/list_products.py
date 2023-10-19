@@ -21,22 +21,24 @@ def new(product: ListProducts) -> dict:
     
 
 def get(order_id: int) -> dict:
-    res = db_manager.execute(query="""SELECT p.title, lp.count, p.cost
+    res = db_manager.execute(query="""SELECT p.ID, lp.orderID, p.title, lp.count, p.cost
                                        FROM ListProducts lp
-                                       INNER JOIN Product p
-                                       ON  lp.productID = p.ID
+                                       INNER JOIN Products p
+                                       ON lp.productID = p.ID
                                        WHERE lp.orderID = ?""",
                               args=(order_id,),
                               many=True) 
-
+    print(res)
     list_products_lists = []
 
     if res["result"]:
         for list_products in res["result"]:
             list_products_lists.append(ProductListForClient(
-                title=list_products[0],
-                cost=list_products[1],
-                count=list_products[2]))
+                productID=list_products[0],
+                orderID=list_products[1],
+                title=list_products[2],
+                cost=list_products[3],
+                count=list_products[4]))
             
     res["result"] = None if len(list_products_lists) == 0 else list_products_lists
 

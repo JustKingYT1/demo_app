@@ -42,6 +42,8 @@ class Products(ModifyBaseModel):
 
 
 class ProductListForClient(BaseModel):
+    productID: int
+    orderID: int
     title: str
     cost: int
     count: int

@@ -20,7 +20,7 @@ CREATE TABLE Locations
     regionID INT NOT NULL,
     locale VARCHAR(100) NOT NULL UNIQUE,
     coordinates VARCHAR(40) NOT NULL UNIQUE,
-    FOREIGN KEY (regionID) 
+    FOREIGN KEY (regionID)
         REFERENCES Regions(ID)
         ON DELETE CASCADE ON UPDATE NO ACTION
 );
