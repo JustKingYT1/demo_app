@@ -22,8 +22,8 @@ def new_order(order: Orders) -> dict:
 
 
 @orders_router.put(path='/complete/{order_id}', response_model=dict)
-def complete_order(order_id: int, new_data: OrderComplete) -> dict:
-    return orders.complete(orderID=order_id, new_data=new_data)
+def complete_order(order_id: int) -> dict:
+    return orders.complete(orderID=order_id)
 
 
 @orders_router.delete(path='/delete/{order_id}', response_model=dict)

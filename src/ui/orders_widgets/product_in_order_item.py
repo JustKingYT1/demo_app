@@ -1,4 +1,5 @@
 from PySide6 import QtWidgets, QtCore, QtGui
+from src.ui.api.resolvers import delete_product_in_order
 
 
 class ProductInOrderItem(QtWidgets.QWidget):
@@ -10,10 +11,12 @@ class ProductInOrderItem(QtWidgets.QWidget):
 
     def __initUI(self) -> None:
         self.main_h_layout = QtWidgets.QHBoxLayout()
-
+        self.product_id = None
+        self.order_id = None 
         self.title = QtWidgets.QLabel()
         self.count = QtWidgets.QLabel()
         self.cost = QtWidgets.QLabel()
+        self.delete_button = QtWidgets.QPushButton()
 
     def __settingUI(self) -> None:
         self.setLayout(self.main_h_layout)
@@ -22,6 +25,7 @@ class ProductInOrderItem(QtWidgets.QWidget):
         self.main_h_layout.addWidget(self.title)
         self.main_h_layout.addWidget(self.cost)
         self.main_h_layout.addWidget(self.count)
+        self.main_h_layout.addWidget(self.delete_button)
 
         self.title.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.cost.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
@@ -37,10 +41,22 @@ class ProductInOrderItem(QtWidgets.QWidget):
         self.cost.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
         self.count.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
 
+        self.delete_button.setText('Delete')
+
         self.setFixedHeight(75)
 
-    def set_product_info(self, title: str, cost: int, count: int) -> None:
+        self.delete_button.clicked.connect(self.on_click_del_button)
+
+    def set_product_info(self, productID: int, orderID: int, title: str, cost: int, count: int) -> None:
+        self.product_id = productID
+        self.order_id = orderID
         self.title.setText(str(title))
         self.cost.setText(str(cost))
         self.count.setText(str(count))
 
+    def on_click_del_button(self) -> None:
+        self.delete_product()
+
+    def delete_product(self) -> None:
+        delete_product_in_order(order_id=self.order_id, product_id=self.product_id)
+        self.hide()

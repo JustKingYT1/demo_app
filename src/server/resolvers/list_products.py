@@ -28,7 +28,7 @@ def get(order_id: int) -> dict:
                                        WHERE lp.orderID = ?""",
                               args=(order_id,),
                               many=True) 
-    print(res)
+    
     list_products_lists = []
 
     if res["result"]:

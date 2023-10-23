@@ -11,7 +11,8 @@ from ui.main_widgets.user_profile import UserProfile
 import multiprocessing
 from ui.api.resolvers import get_all_orders
 import sys
-import time
+from src.ui.product_widgets.cart_widget import CartWidget
+import json
 
 sys.path.append('C:/demo_app/src')
 
@@ -22,16 +23,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self) -> None:
         super().__init__()
-        self.server_process = multiprocessing.Process(target=start_server)
-        self.server_process.start()
-        time.sleep(7)
+        self.start_server()
         if self.__connect_check():
             if self.__connect_check()["code"] == 400:
-                self.server_process.terminate()
                 self.show_message(text=self.__connect_check()["msg"], error=True, parent=self)
+                self.server_process.terminate()
                 exit()
         
-
         sign_window = SignWindow(self)
         sign_window.show()
         sign_window.exec_()
@@ -47,7 +45,7 @@ class MainWindow(QtWidgets.QMainWindow):
     @staticmethod
     @resolvers.server_available
     def __connect_check() -> None:
-        return None
+        return {"code": 200, 'msg': 'Succesfully', 'error': False, 'result': None}
 
     def __initUI(self) -> None:
         self.central_widget = QtWidgets.QWidget(self)
@@ -57,6 +55,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.page_list = PageListMenu(self)
         self.product_list = ProductsList(self)
         self.orders_list = OrdersList(self)
+        self.cart_widget = CartWidget(self)
         self.user_profile = UserProfile(self)
         self.authorization_menu = AuthorizationMenu(self)
 
@@ -74,25 +73,36 @@ class MainWindow(QtWidgets.QMainWindow):
         self.main_h_layout.addWidget(self.authorization_menu)
         self.main_h_layout.addWidget(self.user_profile)
 
+        self.widget_container_layout.addWidget(self.cart_widget)
         self.widget_container_layout.addWidget(self.product_list)
         self.widget_container_layout.addWidget(self.orders_list)
         self.page_list.product_item.bind_widget(self.product_list)
         self.page_list.users_item.bind_widget(self.product_list)
         self.page_list.orders_item.bind_widget(self.orders_list)
-        self.page_list.cart_item.bind_widget(self.orders_list)
+        self.page_list.cart_item.bind_widget(self.cart_widget)
 
         self.product_list.update_products()
         self.orders_list.update_orders(get_all_orders(self.session.user.userID)["result"])
+        
+        self.get_order_id_in_offline_app()
 
         include_widgets(main_win=self, elements=self.__dict__)
-
-        # self.log_in_button.clicked.connect(self.open_login_dialog)
-        # self.sign_up_button.clicked.connect(self.open_register_dialog)
 
         self.user_profile.hide()
 
         self.page_list.product_item.switch_page()
 
+    def start_server(self) -> None:
+        self.server_process = multiprocessing.Process(target=start_server)
+        self.server_process.start()
+        while True:
+            if self.__connect_check()["code"] == 200:
+                break
+
+    def get_order_id_in_offline_app(self) -> None:
+        with open('C:/demo_app/src/ui/api/data.json', 'r') as json_file:
+            order_id = json.load(json_file)['order_id']
+            self.cart_widget.order_id = order_id if not order_id == 0 else self.cart_widget.set_order_id_in_cart_widget()
 
     def authorization(self) -> None:
         self.authorization_menu.hide()
@@ -115,11 +125,14 @@ class MainWindow(QtWidgets.QMainWindow):
         messagebox.setWindowTitle('Error' if error else 'Information')
         messagebox.setText(text)
         messagebox.setIcon(QtWidgets.QMessageBox.Icon.Critical if error else QtWidgets.QMessageBox.Icon.Information)
-        messagebox.show()
         messagebox.exec_()
 
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+        with open('C:/demo_app/src/ui/api/data.json', 'w') as json_file:
+            json.dump({"order_id": self.cart_widget.order_id}, json_file)
         self.product_list.stop_flag = True
+        self.orders_list.stop_flag = True
+        self.cart_widget.stop_flag = True
         self.server_process.terminate()
         exit()
 

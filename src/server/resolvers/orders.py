@@ -67,25 +67,25 @@ def get_all(accountID: int) -> dict:
     return res
 
 
-def complete(orderID: int, new_data: OrderComplete) -> dict:
+def complete(orderID: int) -> dict:
 
-    res = get(order_id=orderID)
+    # res = get(order_id=orderID)
 
-    if res["result"]:
-        if res["result"].completed == True:
-            res["msg"] = "Already completed"
-            res["code"] = 400
-            res["error"] = True
+    # if res["result"]:
+    #     if res["result"].completed == True:
+    #         res["msg"] = "Already completed"
+    #         res["code"] = 400
+    #         res["error"] = True
 
-            return res
+    #         return res
 
     res = db_manager.execute(query="""UPDATE Orders
-                                       SET completed = ? 
+                                       SET completed = TRUE 
                                        WHERE ID = ?
                                        RETURNING ID""",
-                              args=(new_data.completed, orderID))
+                              args=(orderID,))
     
-    res["result"] = get(order_id=orderID)["result"]
+    # res["result"] = get(order_id=orderID)["result"]
 
     res["msg"] = "Completed"
 

@@ -40,7 +40,7 @@ CREATE TABLE TypesOfUsers
 (
     ID INTEGER NOT NULL PRIMARY KEY,
     type VARCHAR(35) NOT NULL UNIQUE,
-    accessLevel INT NOT NULL
+    accessLevel INT NOT NULL 
 );
 
 CREATE TABLE Users

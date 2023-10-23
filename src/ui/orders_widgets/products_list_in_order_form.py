@@ -1,4 +1,5 @@
 from PySide6 import QtWidgets, QtCore, QtGui
+import PySide6.QtGui
 from src.ui.main_widgets.tools import include_widgets
 from src.ui.api.resolvers import get_all_orders, get_order
 from src.ui.orders_widgets.product_in_order_item import ProductInOrderItem
@@ -7,7 +8,7 @@ import threading
 
 class ProductListInOrder(QtWidgets.QDialog):
     stop_flag = None
-    add_product_in_order_signal: QtCore.Signal = QtCore.Signal(str, int, int)
+    add_product_in_order_signal: QtCore.Signal = QtCore.Signal(int, int, str, int, int)
 
     def __init__(self, parent) -> None:
         super().__init__(parent=parent)
@@ -25,6 +26,7 @@ class ProductListInOrder(QtWidgets.QDialog):
 
     def __settingUI(self) -> None:
         self.setLayout(self.main_v_layout)
+        self.resize(300, 400)
         self.main_v_layout.setContentsMargins(0, 0, 0, 0)
         self.main_v_layout.addWidget(self.scroll_area)
         self.scroll_area.setWidget(self.scroll_widget)
@@ -32,32 +34,34 @@ class ProductListInOrder(QtWidgets.QDialog):
         self.scroll_area.setWidgetResizable(True)
 
         self.scroll_layout.addWidget(self.statuslabel)
-        self.statuslabel.set_product_info('Title', 'Cost', 'Count')
+        self.statuslabel.set_product_info(0, 0, 'Title', 'Cost', 'Count')
 
-        self.add_product_in_order_signal.connect(self.add_order_slot)
+        self.add_product_in_order_signal.connect(self.add_product_in_order_slot)
 
-    def update_list_in_order(self, products) -> None:
+    def update_products_in_order(self, products) -> None:
+        self.clear_products_in_order()
         if products:
-            self.clear_products_in_order()
             threading.Thread(target=lambda: self.load_products_in_order(products)).start()
 
+
     def load_products_in_order(self, products) -> None:
-        for order in [products] if type(products) == dict else products:
+        for product in [products] if type(products) == dict else products:
             if self.stop_flag:
                 exit()
 
             self.add_product_in_order_signal.emit(
-                order["title"],
-                order["cost"],
-                order["count"]
+                product["productID"],
+                product["orderID"],
+                product["title"],
+                product["cost"],
+                product["count"]
             )
 
-    def add_product_in_order(self, title: str, cost: int, count: int) -> None:
+    def add_product_in_order(self, product_id: int, order_id: int, title: str, cost: int, count: int) -> None:
         new_product = ProductInOrderItem(self)
-        self.scroll_widget.__dict__.update({title: new_product})
-        new_product.set_product_info(title=title, cost=cost, count=count)
+        self.scroll_widget.__dict__.update({product_id: new_product})
+        new_product.set_product_info(productID=product_id, orderID=order_id, title=title, cost=cost, count=count)
         self.scroll_layout.addWidget(new_product)
-        include_widgets(main_win=self.parent, elements=self.__dict__)
 
     def clear_products_in_order(self) -> None:
         for product in dict(self.scroll_widget.__dict__):
@@ -65,7 +69,9 @@ class ProductListInOrder(QtWidgets.QDialog):
                 self.scroll_widget.__dict__[product].close()
                 self.scroll_widget.__dict__.pop(product)
 
-    @QtCore.Slot(str, int, int)
-    def add_order_slot(self, title: str, cost: int, count: int) -> None:
-        self.add_product_in_order(title=title, cost=cost, count=count)
-        include_widgets(main_win=self.parent, elements=self.__dict__)
+    @QtCore.Slot(int, int, str, int, int)
+    def add_product_in_order_slot(self, product_id: int, order_id: int, title: str, cost: int, count: int) -> None:
+        self.add_product_in_order(product_id=product_id, order_id=order_id, title=title, cost=cost, count=count)
+
+    def closeEvent(self, arg__1: QtGui.QCloseEvent) -> None:
+        self.destroy()

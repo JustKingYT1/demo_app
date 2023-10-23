@@ -21,9 +21,30 @@ def server_available(func):
     
     return need_it
 
+
+@server_available
+def delete_product_in_order(order_id: int, product_id: int) -> dict:
+    return requests.delete(url=f'{settings.URL}/listProducts/delete/{order_id}/{product_id}').json()
+
+
+@server_available
+def add_product_in_cart(product_id: int, order_id: int, count: int) -> dict:
+    return requests.post(url=f'{settings.URL}/listProducts/new', data=f'{{"orderID": "{order_id}", "productID": "{product_id}", "count": "{count}"}}').json()
+
+
+@server_available
+def complete_order(order_id: int) -> dict:
+    return requests.put(url=f'{settings.URL}/orders/complete/{order_id}').json()
+
+
 @server_available
 def get_order(track_number: str, userID: int) -> None:
     return requests.post(url=f'{settings.URL}/orders/getOne', data=f'{{"track_number": "{track_number}", "userID": "{userID}"}}').json()
+
+
+@server_available
+def get_all_products_in_order(order_id: int) -> dict:
+    return requests.get(url=f'{settings.URL}/listProducts/get/{order_id}').json()
 
 
 @server_available

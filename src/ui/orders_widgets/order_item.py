@@ -1,9 +1,12 @@
 from PySide6 import QtWidgets, QtCore, QtGui
+from src.ui.orders_widgets.products_list_in_order_form import ProductListInOrder
+from src.ui.api.resolvers import get_all_products_in_order, complete_order, get_all_orders
 
 
 class OrderItem(QtWidgets.QWidget):
     def __init__(self, parent) -> None:
         super().__init__(parent=parent)
+        self.parent = parent
         self.__initUI()
         self.__settingUI()
     
@@ -17,6 +20,7 @@ class OrderItem(QtWidgets.QWidget):
         self.completed = QtWidgets.QLabel()
 
         self.open_button = QtWidgets.QPushButton()
+        self.pick_up_button = QtWidgets.QPushButton()
 
     def __settingUI(self) -> None:
         self.setLayout(self.main_h_layout)
@@ -28,6 +32,7 @@ class OrderItem(QtWidgets.QWidget):
         self.main_h_layout.addWidget(self.total_cost)
         self.main_h_layout.addWidget(self.completed)
         self.main_h_layout.addWidget(self.open_button)
+        self.main_h_layout.addWidget(self.pick_up_button)
 
         self.completed.setText('False')
 
@@ -38,6 +43,10 @@ class OrderItem(QtWidgets.QWidget):
         self.completed.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         
         self.open_button.setText('Open')
+        self.pick_up_button.setText('Pick Up!')
+
+        self.open_button.setFixedWidth(50)
+        self.pick_up_button.setFixedWidth(50)
 
         # self.setFrameShape(QtWidgets.QFrame.Shape.Box)
         self.orderID.setFrameShape(QtWidgets.QFrame.Shape.Box)
@@ -56,6 +65,7 @@ class OrderItem(QtWidgets.QWidget):
         self.setFixedHeight(75)
 
         self.open_button.clicked.connect(self.on_open_button_click)
+        self.pick_up_button.clicked.connect(self.on_pick_up_button_click)
 
 
     def set_order_info(self, order_id: int, user_id: int, track_number: str, total_cost: int, completed: bool) -> None:
@@ -65,8 +75,19 @@ class OrderItem(QtWidgets.QWidget):
         self.total_cost.setText(str(total_cost))
         self.completed.setText(str(completed))
 
+    def on_pick_up_button_click(self) -> None:
+        self.complete_order()
+
+    def complete_order(self) -> None:
+        res = complete_order(order_id=int(self.orderID.text()))
+        self.parent.parent.show_message(text=res['msg'], error=False if res["code"] == 200 else True, parent=self.parent)
+        self.parent.update_orders(get_all_orders(userID=int(self.userID.text()))["result"])
+
     def on_open_button_click(self) -> None:
         self.open_order_form()
 
     def open_order_form(self) -> None:
-        pass
+        product_list = ProductListInOrder(self)
+        product_list.update_products_in_order(get_all_products_in_order(int(self.orderID.text()))["result"])
+        product_list.show()
+        

@@ -50,7 +50,7 @@ class ProductsList(QtWidgets.QWidget):
         self.product_search_line_edit.setProperty("access_level", -1)
 
         self.search_button.clicked.connect(self.on_find_button_click)
-        self.add_product_signal.connect(self.add_product)
+        self.add_product_signal.connect(self.add_product_slot)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
         if event.key() == QtCore.Qt.Key.Key_Return.numerator:
@@ -81,7 +81,6 @@ class ProductsList(QtWidgets.QWidget):
         self.scroll_widget.__dict__.update({product_id: new_product})
         new_product.set_product_info(productID=int(product_id), name=str(name), cost=int(cost))
         self.scroll_layout.addWidget(new_product)
-        include_widgets(main_win=self.parent, elements=self.__dict__)
     
     def clear_products(self) -> None:
         for product in dict(self.scroll_widget.__dict__):
@@ -90,6 +89,6 @@ class ProductsList(QtWidgets.QWidget):
                 self.scroll_widget.__dict__.pop(product)
 
     QtCore.Slot(int, str, int)
-    def add_procuct_slot(self, product_id: int, name: str, cost: int) -> None:
+    def add_product_slot(self, product_id: int, name: str, cost: int) -> None:
         self.add_product(product_id, name, cost)
-        include_widgets(parent=self.parent(), elements=self.__dict__)
+        include_widgets(main_win=self.parent, elements=self.__dict__)
