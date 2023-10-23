@@ -59,4 +59,4 @@ class ProductInOrderItem(QtWidgets.QWidget):
 
     def delete_product(self) -> None:
         delete_product_in_order(order_id=self.order_id, product_id=self.product_id)
-        self.hide()
+        self.parent.update_products()

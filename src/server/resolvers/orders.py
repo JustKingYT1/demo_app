@@ -1,6 +1,6 @@
 from server.database.db_manager import db_manager
 
-from server.database.models import Orders, OrderComplete, OrderTrackNum
+from server.database.models import Orders, TotalCost, OrderTrackNum
 
 def new(order: Orders) -> dict:
     res = db_manager.execute(query="""INSERT INTO Orders(ID, accountID, trackNumber, totalCost, completed) 
@@ -11,6 +11,12 @@ def new(order: Orders) -> dict:
     # res["result"] = None if not res["result"] else get(res["result"][0])["result"]
 
     return res
+
+# def set_total_cost(order_id: int, total_cost: TotalCost) -> dict:
+#     res = db_manager.execute(query='''UPDATE Orders SET totalCost = ? WHERE ID = ?''',
+#                              args=(total_cost.total_cost, order_id))
+    
+#     return res
 
 def get(order: OrderTrackNum) -> dict:
     res = db_manager.execute(query="""SELECT * 

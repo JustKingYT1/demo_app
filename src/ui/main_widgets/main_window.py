@@ -81,10 +81,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.page_list.orders_item.bind_widget(self.orders_list)
         self.page_list.cart_item.bind_widget(self.cart_widget)
 
+        self.get_order_id_in_offline_app()
+
         self.product_list.update_products()
         self.orders_list.update_orders(get_all_orders(self.session.user.userID)["result"])
-        
-        self.get_order_id_in_offline_app()
+        self.cart_widget.update_products()
 
         include_widgets(main_win=self, elements=self.__dict__)
 

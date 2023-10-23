@@ -7,7 +7,7 @@ class ModifyBaseModel(BaseModel):
     ID: int
 
 
-class Warehouses(BaseModel):
+class Warehouses(ModifyBaseModel):
     name: str
     locationID: int
     phone: str
@@ -26,6 +26,11 @@ class AccountPass(BaseModel):
 
 class SignIn(BaseModel):
     FIO: str
+
+
+class TotalCost(BaseModel):
+    total_cost: int
+
 
 class AccountLog(AccountPass):
     userID: int
@@ -97,8 +102,4 @@ class RemnantsOfProducts(BaseModel):
     warehouseID: int
     productID: int
     count: int  
-
-    
-class UpdRemnantsOfProducts(RemnantsOfProducts):
-    new_productID: int
 

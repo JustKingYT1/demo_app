@@ -1,6 +1,6 @@
 from server.database.db_manager import db_manager
 
-from server.database.models import RemnantsOfProducts, UpdRemnantsOfProducts
+from server.database.models import RemnantsOfProducts
 
 def new(product: RemnantsOfProducts) -> dict:
     res = db_manager.execute(query="""INSERT INTO RemnantsOfProducts(warehouseID, productID, count) 
@@ -86,14 +86,14 @@ def get_all() -> dict:
     return res
 
 
-def update(new_data: UpdRemnantsOfProducts) -> dict:
+def update(new_data: RemnantsOfProducts) -> dict:
     res = db_manager.execute(query="""UPDATE RemnantsOfProducts 
-                                       SET (productID, count) = (?, ?) 
+                                       SET count = ? 
                                        WHERE (warehouseID, productID) = (?, ?)
-                                       RETURNING ID""",
-                              args=(new_data.new_productID, new_data.count, new_data.warehouseID, new_data.productID))
+                                       """,
+                              args=(new_data.count, new_data.warehouseID, new_data.productID))
     
-    res["result"] = None if not res["result"] else getOneProduct(warehouse_id=new_data.warehouseID, productID=new_data.new_productID)["result"]
+    # res["result"] = None if not res["result"] else getOneProduct(warehouse_id=new_data.warehouseID, productID=new_data.new_productID)["result"]
 
     if res["result"] is None:
         res["msg"] = "Not found"

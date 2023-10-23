@@ -1,6 +1,6 @@
 import fastapi
 
-from server.database.models import RemnantsOfProducts, UpdRemnantsOfProducts
+from server.database.models import RemnantsOfProducts
 from server.resolvers import remnants_products
 
 
@@ -28,7 +28,7 @@ def new_product_on_warehouse(product: RemnantsOfProducts) -> dict:
 
 
 @remnants_router.put(path='/update', response_model=dict)
-def update_product_on_warehouse(new_data: UpdRemnantsOfProducts) -> dict:
+def update_product_on_warehouse(new_data: RemnantsOfProducts) -> dict:
     return remnants_products.update(new_data=new_data)
 
 

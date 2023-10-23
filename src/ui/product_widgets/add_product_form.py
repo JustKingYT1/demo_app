@@ -29,10 +29,13 @@ class AddProductInCart(QtWidgets.QDialog):
         self.product.delete_button.hide()
         self.product.count_line_edit = QtWidgets.QLineEdit()
         self.product.main_h_layout.addWidget(self.product.count_line_edit)
-        self.product.title.setFixedHeight(50)
-        self.product.cost.setFixedHeight(50)
-        self.main_h_layout.addWidget(self.product)
-        self.main_h_layout.addWidget(self.confirm_button)
+        self.product.cost.setFixedSize(40, 40)
+        self.product.title.setFixedSize(40, 40)
+        self.product.cost.setText(self.product.cost.text() + ' p')
+        self.confirm_button.setText('Add product')
+
+        self.main_h_layout.addWidget(self.product, 3)
+        self.main_h_layout.addWidget(self.confirm_button, 1)
         
         self.confirm_button.clicked.connect(self.on_click_confirm_button)
 

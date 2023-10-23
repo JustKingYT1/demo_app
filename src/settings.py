@@ -1,3 +1,4 @@
+import random
 # Global settings
 DEBUG = True
 
