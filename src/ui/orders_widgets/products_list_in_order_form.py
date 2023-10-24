@@ -34,6 +34,7 @@ class ProductListInOrder(QtWidgets.QDialog):
         self.scroll_area.setWidgetResizable(True)
 
         self.scroll_layout.addWidget(self.statuslabel)
+        self.statuslabel.delete_button.hide()
         self.statuslabel.set_product_info(0, 0, 'Title', 'Cost', 'Count')
 
         self.add_product_in_order_signal.connect(self.add_product_in_order_slot)
@@ -59,6 +60,7 @@ class ProductListInOrder(QtWidgets.QDialog):
 
     def add_product_in_order(self, product_id: int, order_id: int, title: str, cost: int, count: int) -> None:
         new_product = ProductInOrderItem(self)
+        new_product.delete_button.hide()
         self.scroll_widget.__dict__.update({product_id: new_product})
         new_product.set_product_info(productID=product_id, orderID=order_id, title=title, cost=cost, count=count)
         self.scroll_layout.addWidget(new_product)

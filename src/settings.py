@@ -1,6 +1,5 @@
-import random
 # Global settings
-DEBUG = True
+DEBUG = False
 
 # DB settings
 DB_PATH = "C:/demo_app/src/server/database/shesterochka.db"

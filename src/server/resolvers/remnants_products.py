@@ -8,7 +8,7 @@ def new(product: RemnantsOfProducts) -> dict:
                                           RETURNING warehouseID""", 
                              args=(product.warehouseID, product.productID, product.count))
     
-    res["result"] = None if not res["result"] else getOneProduct(warehouseID=product.warehouseID, productID=product.productID)["result"]
+    # res["result"] = None if not res["result"] else getOneProduct(warehouseID=product.warehouseID, productID=product.productID)["result"]
     
     return res
 

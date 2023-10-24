@@ -83,3 +83,5 @@ class ProductItem(QtWidgets.QFrame):
         add_product_in_cart(product_id=int(self.product_id.text()), order_id=self.parent.parent.cart_widget.order_id, count=count)
         self.parent.parent.cart_widget.update_products()
         
+        self.hide()
+

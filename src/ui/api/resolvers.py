@@ -23,7 +23,7 @@ def server_available(func):
 
 @server_available
 def change_count_product_on_warehouse(remnants: RemnantsOfProducts) -> dict:
-    return requests.put(url=f'{settings.URL}/remnants/update', data=f'{{"warehouseID": "{remnants.warehouseID}", "productID": "{remnants.productID}", "count": "{remnants.count}"}}')
+    return requests.put(url=f'{settings.URL}/remnants/update', data=f'{{"warehouseID": "{remnants.warehouseID}", "productID": "{remnants.productID}", "count": "{remnants.count}"}}').json()
 
 
 @server_available
@@ -33,7 +33,7 @@ def get_all_warehouses_for_combo_box():
 
 @server_available
 def get_remnants_of_products_in_warehouse(warehouse_id: int) -> dict:
-    return requests.get(url=f'{settings.URL}/remnants/get/{warehouse_id}')
+    return requests.get(url=f'{settings.URL}/remnants/get/{warehouse_id}').json()
 
 
 @server_available

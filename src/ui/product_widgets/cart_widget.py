@@ -103,21 +103,49 @@ class CartWidget(QtWidgets.QWidget):
     def on_click_create_button(self) -> None:
         self.create_order()
 
-    def counter_products_on_warehouse(self) -> None:
+    def counter_products_on_warehouse(self) -> dict:
         products_in_order = get_all_products_in_order(self.order_id if self.order_id else -1)['result']
-        products_on_warehouse = get_remnants_of_products_in_warehouse(int(self.warehouses_combo_box.currentText().replace(' ', '').split(':')[0]))
-
+        products_on_warehouse = get_remnants_of_products_in_warehouse(int(self.warehouses_combo_box.currentText().replace(' ', '').split(':')[0]))['result']
+        if not products_in_order:
+            self.parent.show_message(text='Cart is empty', error=True, parent=self)
+            return {'error': 'True'}
+        list_products = []
         for product_on_warehouse in products_on_warehouse:
             for product_in_order in products_in_order:
-                if product_in_order["title"] == product_on_warehouse["title"]:
-                    if product_in_order["count"] <= products_on_warehouse["count"]:
-                        change_count_product_on_warehouse(remnants=RemnantsOfProducts(
-                            warehouseID=int(self.warehouses_combo_box.currentText().replace(' ', '').split(':')[0]),
-                            productID=product_in_order["title"],
-                            count=(int(product_on_warehouse["count"]) - int(product_in_order["count"]))
-                        ))
+                if product_in_order["productID"] == product_on_warehouse["productID"]:
+                    if product_in_order["cost"] > product_on_warehouse["count"]:
+                        list_products.append({'warehouse': product_on_warehouse, 'order': product_in_order})
+        
+        return {"error": False if len(list_products) == 0 else True, 'result': {'order': products_in_order, 'warehouse': products_on_warehouse} if len(list_products) == 0 else list_products}
+    
+    def change_products_on_warehouse(self) -> dict:
+        res = self.counter_products_on_warehouse()
+        if not res["error"]:
+            for product_in_order, product_on_warehouse in zip(res['result']['order'], res['result']['warehouse']):
+                print(product_in_order, product_on_warehouse)
+                change_count_product_on_warehouse(remnants=RemnantsOfProducts(
+                    warehouseID=product_on_warehouse['warehouseID'],
+                    productID=product_on_warehouse['productID'],
+                    count=(product_on_warehouse['count'] - product_in_order['cost'])
+                ))
+            return res
+        elif res['error'] == 'True':
+            res['error'] =  True
+            return res
+        else:
+            msg = f'Not enough on warehouse: '
+            for product in res['result']:
+                msg += f'productID: {product["warehouse"]["productID"]}, count: {product["warehouse"]["count"] - product["order"]["cost"]}, '
+            
+            self.parent.show_message(text=msg, error=True, parent=self)
 
+            return res
+            
     def create_order(self) -> None:
+        products = self.change_products_on_warehouse()
+        if products["error"]:
+            return
+
         order = Orders(
             ID=self.order_id,
             accountID=self.parent.session.user.userID,
@@ -125,7 +153,7 @@ class CartWidget(QtWidgets.QWidget):
             total_cost=int(self.total_cost_line_edit.text())
         )
 
-        create_order(order=order)
+        create_order(order=order)    
 
         self.order_id = self.set_order_id_in_cart_widget()
 
@@ -133,7 +161,9 @@ class CartWidget(QtWidgets.QWidget):
 
         self.parent.page_list.product_item.switch_page()
 
-        self.parent.orders_list.widget.update_products()
+        self.parent.product_list.update_products()
+
+        self.parent.orders_list.update_orders(get_all_orders(self.parent.session.user.userID)["result"])
 
         self.total_cost_line_edit.setText('')
 

@@ -31,7 +31,6 @@ class AddProductInCart(QtWidgets.QDialog):
         self.product.main_h_layout.addWidget(self.product.count_line_edit)
         self.product.cost.setFixedSize(40, 40)
         self.product.title.setFixedSize(40, 40)
-        self.product.cost.setText(self.product.cost.text() + ' p')
         self.confirm_button.setText('Add product')
 
         self.main_h_layout.addWidget(self.product, 3)
