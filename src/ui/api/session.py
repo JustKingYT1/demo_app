@@ -50,7 +50,6 @@ class Session:
                                         login=answer["result"]["login"],
                                         password=answer["result"]["password"],
                                         access_level=resolvers.get_access_level(answer["result"]["userID"])["result"]["access_level"])
-                self.auth = True
 
     def update(self, password: str):
         answer: dict = resolvers.update(AccountPass(password=str(password)), userID=self.user.userID)
@@ -65,3 +64,4 @@ class Session:
         self.user.access_level = -1
         self.user.login = ''
         self.user.password = ''
+        self.auth = False

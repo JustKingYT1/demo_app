@@ -2,7 +2,7 @@ from PySide6 import QtWidgets, QtCore, QtGui
 from ui.main_widgets.tools import get_pixmap_path, include_widgets
 from ui.api.resolvers import get_all_orders, get_order
 from ui.orders_widgets.order_item import OrderItem
-import threading
+import threading, time
 
 
 class OrdersList(QtWidgets.QWidget):
@@ -16,6 +16,8 @@ class OrdersList(QtWidgets.QWidget):
         self.__settingUI()
 
     def __initUI(self) -> None:
+        self.last_keypress_time = 0
+        self.keypress_interval = 0.2
         self.main_v_layout = QtWidgets.QVBoxLayout()
         self.tools_h_layout = QtWidgets.QHBoxLayout()
         self.order_search_line_edit = QtWidgets.QLineEdit()
@@ -38,6 +40,8 @@ class OrdersList(QtWidgets.QWidget):
         self.scroll_widget.setLayout(self.scroll_layout)
         self.scroll_area.setWidgetResizable(True)
 
+        self.scroll_layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
+
         self.scroll_layout.addWidget(self.statuslabel)
 
         self.statuslabel.set_order_info('OrderID', 'UserID', 'Track-number', 'Total cost', 'Completed')
@@ -53,7 +57,9 @@ class OrdersList(QtWidgets.QWidget):
         self.add_order_signal.connect(self.add_order_slot)
     
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
-        if event.key() == QtCore.Qt.Key.Key_Return.numerator:
+        current_time = time.time()
+        if event.key() == QtCore.Qt.Key.Key_Return.numerator and ((current_time - self.last_keypress_time) >= self.keypress_interval):
+            self.last_keypress_time = current_time
             self.on_find_button_click()
 
     def on_find_button_click(self) -> None:
@@ -83,6 +89,8 @@ class OrdersList(QtWidgets.QWidget):
         self.scroll_widget.__dict__.update({order_id: new_order})
         new_order.set_order_info(order_id=str(order_id), user_id=str(user_id), track_number=str(track_number), total_cost=str(total_cost), completed=str(completed))
         self.scroll_layout.addWidget(new_order)
+        if completed:
+            new_order.pick_up_button.hide()
         include_widgets(main_win=self.parent, elements=self.__dict__)
     
     def clear_orders(self) -> None:

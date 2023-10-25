@@ -40,7 +40,7 @@ class CartWidget(QtWidgets.QWidget):
         self.sup_main_h_layout.setContentsMargins(0, 0, 0, 0)
         self.tools_v_layout.setContentsMargins(10, 10, 10, 0)
         self.main_h_layout.addLayout(self.sup_main_h_layout)
-        self.sup_main_h_layout.addWidget(self.scroll_area, 8)
+        self.sup_main_h_layout.addWidget(self.scroll_area, 10)
         self.sup_main_h_layout.addLayout(self.tools_v_layout, 1)
         self.scroll_area.setWidget(self.scroll_widget)
         self.scroll_widget.setLayout(self.scroll_layout)
@@ -48,6 +48,8 @@ class CartWidget(QtWidgets.QWidget):
 
         self.total_cost_layout.addWidget(self.total_cost_label)
         self.total_cost_layout.addWidget(self.total_cost_line_edit)
+
+        self.scroll_layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
 
         self.total_cost_line_edit.setEnabled(False)
 
@@ -122,7 +124,6 @@ class CartWidget(QtWidgets.QWidget):
         res = self.counter_products_on_warehouse()
         if not res["error"]:
             for product_in_order, product_on_warehouse in zip(res['result']['order'], res['result']['warehouse']):
-                print(product_in_order, product_on_warehouse)
                 change_count_product_on_warehouse(remnants=RemnantsOfProducts(
                     warehouseID=product_on_warehouse['warehouseID'],
                     productID=product_on_warehouse['productID'],

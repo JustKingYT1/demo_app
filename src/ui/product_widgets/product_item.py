@@ -54,7 +54,7 @@ class ProductItem(QtWidgets.QFrame):
         self.product_id.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
         self.cost.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
 
-        self.setFixedHeight(80)
+        self.setFixedHeight(70)
 
         self.buy_button.clicked.connect(self.buy_button_click)
         self.signal_buy_button.connect(self.open_add_in_cart_form)

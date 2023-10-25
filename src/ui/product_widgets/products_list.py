@@ -1,14 +1,14 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 from ui.main_widgets.tools import get_pixmap_path, include_widgets
-from ui.api.resolvers import get_all_products, get_product
+from ui.api.resolvers import get_all_products, get_product, get_all_products_in_order
 from ui.product_widgets.product_item import ProductItem
 import threading
+import time
 
 
 class ProductsList(QtWidgets.QWidget):
     stop_flag = None
     add_product_signal: QtCore.Signal = QtCore.Signal(int, str, int)
-
     def __init__(self, parent) -> None:
         super().__init__(parent=parent)
         self.parent = parent
@@ -16,6 +16,8 @@ class ProductsList(QtWidgets.QWidget):
         self.__settingUI()
 
     def __initUI(self) -> None:
+        self.last_keypress_time = 0
+        self.keypress_interval = 0.2
         self.main_v_layout = QtWidgets.QVBoxLayout()
         self.tools_h_layout = QtWidgets.QHBoxLayout()
         self.product_search_line_edit = QtWidgets.QLineEdit()
@@ -38,6 +40,8 @@ class ProductsList(QtWidgets.QWidget):
         self.scroll_widget.setLayout(self.scroll_layout)
         self.scroll_area.setWidgetResizable(True)
 
+        self.scroll_layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
+
         self.scroll_layout.addWidget(self.statuslabel)
         
         self.statuslabel.set_product_info('Name', 'Cost', 'ProductID')
@@ -53,7 +57,9 @@ class ProductsList(QtWidgets.QWidget):
         self.add_product_signal.connect(self.add_product_slot)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
-        if event.key() == QtCore.Qt.Key.Key_Return.numerator:
+        current_time = time.time()
+        if event.key() == QtCore.Qt.Key.Key_Return.numerator and ((current_time - self.last_keypress_time) >= self.keypress_interval):
+            self.last_keypress_time = current_time
             self.on_find_button_click()
     
     def on_find_button_click(self) -> None:
@@ -66,10 +72,23 @@ class ProductsList(QtWidgets.QWidget):
             threading.Thread(target=lambda: self.load_products(products)).start()
 
     def load_products(self, products) -> None:
+        flag: bool = False
         for product in [products] if type(products) == dict else products:
             if self.stop_flag:
                 exit()
-                        
+                
+            if self.parent.session.auth:
+                products_in_order = get_all_products_in_order(self.parent.cart_widget.order_id)['result']
+                if products_in_order:
+                    for product_in_order in products_in_order:
+                        if product_in_order['productID'] == product['ID']:
+                            flag = True
+                            break
+                
+                if flag:
+                    flag = False
+                    continue
+                
             self.add_product_signal.emit(
                 product["ID"],
                 product["title"],

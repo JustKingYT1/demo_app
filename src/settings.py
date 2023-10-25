@@ -1,5 +1,5 @@
 # Global settings
-DEBUG = False
+DEBUG = True
 
 # DB settings
 DB_PATH = "C:/demo_app/src/server/database/shesterochka.db"

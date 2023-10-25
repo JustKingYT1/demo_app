@@ -87,7 +87,9 @@ class OrderItem(QtWidgets.QWidget):
         self.open_order_form()
 
     def open_order_form(self) -> None:
+        self.total_cost
         product_list = ProductListInOrder(self)
         product_list.update_products_in_order(get_all_products_in_order(int(self.orderID.text()))["result"])
+        product_list.set_total_cost_in_order_list(int(self.total_cost.text()))
         product_list.show()
         

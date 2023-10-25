@@ -110,6 +110,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.user_profile.show()
         self.user_profile.fill_line_edits()
 
+        self.product_list.update_products()
+
         include_widgets(self, self.__dict__)
 
     def leave(self) -> None:

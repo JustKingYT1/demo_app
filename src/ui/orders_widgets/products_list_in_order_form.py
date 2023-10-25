@@ -17,10 +17,14 @@ class ProductListInOrder(QtWidgets.QDialog):
         self.__settingUI()
 
     def __initUI(self) -> None:
-        self.main_v_layout = QtWidgets.QVBoxLayout()
+        self.main_v_layout = QtWidgets.QHBoxLayout()
         self.scroll_area = QtWidgets.QScrollArea()
         self.scroll_widget = QtWidgets.QWidget()
         self.scroll_layout = QtWidgets.QVBoxLayout()
+
+        self.total_cost_label = QtWidgets.QLabel()
+        self.total_cost_line_edit = QtWidgets.QLineEdit()
+        self.total_cost_layout = QtWidgets.QVBoxLayout()
 
         self.statuslabel = ProductInOrderItem(self)
 
@@ -28,22 +32,32 @@ class ProductListInOrder(QtWidgets.QDialog):
         self.setLayout(self.main_v_layout)
         self.resize(300, 400)
         self.main_v_layout.setContentsMargins(0, 0, 0, 0)
-        self.main_v_layout.addWidget(self.scroll_area)
+        self.main_v_layout.addWidget(self.scroll_area, 10)
         self.scroll_area.setWidget(self.scroll_widget)
         self.scroll_widget.setLayout(self.scroll_layout)
         self.scroll_area.setWidgetResizable(True)
 
+        self.total_cost_label.setText('Total cost: ')
+        self.total_cost_line_edit.setEnabled(False)
+        self.total_cost_layout.addWidget(self.total_cost_label)
+        self.total_cost_layout.addWidget(self.total_cost_line_edit)
+        self.total_cost_layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignBottom)
+        self.main_v_layout.addLayout(self.total_cost_layout, 1)
         self.scroll_layout.addWidget(self.statuslabel)
         self.statuslabel.delete_button.hide()
         self.statuslabel.set_product_info(0, 0, 'Title', 'Cost', 'Count')
 
+        self.scroll_layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
+
         self.add_product_in_order_signal.connect(self.add_product_in_order_slot)
+
+    def set_total_cost_in_order_list(self, total_cost: int) -> None:
+        self.total_cost_line_edit.setText(str(total_cost))
 
     def update_products_in_order(self, products) -> None:
         self.clear_products_in_order()
         if products:
             threading.Thread(target=lambda: self.load_products_in_order(products)).start()
-
 
     def load_products_in_order(self, products) -> None:
         for product in [products] if type(products) == dict else products:
