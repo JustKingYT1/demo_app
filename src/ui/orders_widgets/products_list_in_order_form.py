@@ -57,7 +57,7 @@ class ProductListInOrder(QtWidgets.QDialog):
     def update_products_in_order(self, products) -> None:
         self.clear_products_in_order()
         if products:
-            threading.Thread(target=lambda: self.load_products_in_order(products)).start()
+            threading.Thread(target=self.load_products_in_order, args=(products,)).start()
 
     def load_products_in_order(self, products) -> None:
         for product in [products] if type(products) == dict else products:

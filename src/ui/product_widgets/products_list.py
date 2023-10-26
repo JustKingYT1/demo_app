@@ -69,7 +69,7 @@ class ProductsList(QtWidgets.QWidget):
     def update_products(self, products=get_all_products()["result"]) -> None:
         self.clear_products()
         if products:
-            threading.Thread(target=lambda: self.load_products(products)).start()
+            threading.Thread(target=self.load_products, args=(products,)).start()
 
     def load_products(self, products) -> None:
         flag: bool = False

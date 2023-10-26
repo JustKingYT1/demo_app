@@ -85,7 +85,7 @@ class CartWidget(QtWidgets.QWidget):
         products = get_all_products_in_order(self.order_id if self.order_id else -1)['result']
         self.clear_products()
         if products:
-            threading.Thread(target=self.load_products(products=products)).start()
+            threading.Thread(target=self.load_products, args=(products,)).start()
         
         self.calculate_total_cost()
 
@@ -123,10 +123,11 @@ class CartWidget(QtWidgets.QWidget):
     def change_products_on_warehouse(self) -> dict:
         res = self.counter_products_on_warehouse()
         if not res["error"]:
-            for product_in_order, product_on_warehouse in zip(res['result']['order'], res['result']['warehouse']):
+            for product_in_order, product_on_warehouse in zip(sorted(res['result']['order'], key=lambda x: x['productID']), sorted(res['result']['warehouse'], key=lambda x: x['productID'])):
+                print(product_on_warehouse, product_in_order, product_on_warehouse['count'] - product_in_order['cost'])
                 change_count_product_on_warehouse(remnants=RemnantsOfProducts(
                     warehouseID=product_on_warehouse['warehouseID'],
-                    productID=product_on_warehouse['productID'],
+                    productID=product_in_order['productID'],
                     count=(product_on_warehouse['count'] - product_in_order['cost'])
                 ))
             return res

@@ -35,8 +35,7 @@ class MainWindow(QtWidgets.QMainWindow):
         sign_window.exec_()
 
         if self.session.user.userID == -1:
-            self.server_process.terminate()
-            exit()
+            self.close_func()
 
         self.__initUI()
         self.__settingUI()
@@ -130,13 +129,18 @@ class MainWindow(QtWidgets.QMainWindow):
         messagebox.setIcon(QtWidgets.QMessageBox.Icon.Critical if error else QtWidgets.QMessageBox.Icon.Information)
         messagebox.exec_()
 
-    def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+    def close_func(self) -> None:
         with open('C:/demo_app/src/ui/api/data.json', 'w') as json_file:
             json.dump({"order_id": self.cart_widget.order_id}, json_file)
         self.product_list.stop_flag = True
         self.orders_list.stop_flag = True
         self.cart_widget.stop_flag = True
         self.server_process.terminate()
+        self.close()
         exit()
 
 
+
+
+    def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+        self.close_func()

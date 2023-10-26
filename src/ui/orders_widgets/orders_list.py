@@ -17,7 +17,7 @@ class OrdersList(QtWidgets.QWidget):
 
     def __initUI(self) -> None:
         self.last_keypress_time = 0
-        self.keypress_interval = 0.2
+        self.keypress_interval = 1
         self.main_v_layout = QtWidgets.QVBoxLayout()
         self.tools_h_layout = QtWidgets.QHBoxLayout()
         self.order_search_line_edit = QtWidgets.QLineEdit()
@@ -69,7 +69,7 @@ class OrdersList(QtWidgets.QWidget):
     def update_orders(self, orders) -> None:
         self.clear_orders()
         if orders:
-            threading.Thread(target=lambda: self.load_orders(orders)).start()
+            threading.Thread(target=self.load_orders, args=(orders,)).start()
 
     def load_orders(self, orders) -> None:
         for order in [orders] if type(orders) == dict else orders:
@@ -91,7 +91,6 @@ class OrdersList(QtWidgets.QWidget):
         self.scroll_layout.addWidget(new_order)
         if completed:
             new_order.pick_up_button.hide()
-        include_widgets(main_win=self.parent, elements=self.__dict__)
     
     def clear_orders(self) -> None:
         for product in dict(self.scroll_widget.__dict__):
