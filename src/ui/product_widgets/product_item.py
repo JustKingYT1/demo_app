@@ -78,6 +78,7 @@ class ProductItem(QtWidgets.QFrame):
             product.show()
         else:
             product.close()
+            self.count = 0
 
     def buy_product(self, count) -> None:
         add_product_in_cart(product_id=int(self.product_id.text()), order_id=self.parent.parent.cart_widget.order_id, count=count)
