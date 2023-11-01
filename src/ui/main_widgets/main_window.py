@@ -4,7 +4,7 @@ from src.ui.api.session import Session
 from ui.dialog_forms.sign_in_form import SignWindow
 from ui.orders_widgets.orders_list import OrdersList
 from ui.main_widgets.page_list_menu import PageListMenu
-from ui.product_widgets.products_list import ProductsList
+from ui.product_widgets.products_widget import ProductsList
 from ui.main_widgets.tools import include_widgets
 from ui.main_widgets.authorization_menu import AuthorizationMenu
 from ui.main_widgets.user_profile import UserProfile

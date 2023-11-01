@@ -5,7 +5,7 @@ DEBUG = False
 DB_PATH = "../demo_app/src/server/database/shesterochka.db"
 SCRIPTS_DIR = "../demo_app/src/server/database/scripts"
 
-# Server settings
+# Server settings 
 HOST = '127.0.0.1'
 PORT = 8000
 URL = f'http://{HOST}:{PORT}'

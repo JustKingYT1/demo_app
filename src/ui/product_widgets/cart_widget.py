@@ -124,7 +124,6 @@ class CartWidget(QtWidgets.QWidget):
         res = self.counter_products_on_warehouse()
         if not res["error"]:
             for product_in_order, product_on_warehouse in zip(sorted(res['result']['order'], key=lambda x: x['productID']), sorted(res['result']['warehouse'], key=lambda x: x['productID'])):
-                print(product_on_warehouse, product_in_order, product_on_warehouse['count'] - product_in_order['cost'])
                 change_count_product_on_warehouse(remnants=RemnantsOfProducts(
                     warehouseID=product_on_warehouse['warehouseID'],
                     productID=product_in_order['productID'],
