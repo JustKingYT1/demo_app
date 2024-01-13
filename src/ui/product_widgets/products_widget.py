@@ -58,6 +58,7 @@ class ProductsList(QtWidgets.QWidget):
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
         current_time = time.time()
+        print(current_time)
         if event.key() == QtCore.Qt.Key.Key_Return.numerator and ((current_time - self.last_keypress_time) >= self.keypress_interval):
             self.last_keypress_time = current_time
             self.on_find_button_click()

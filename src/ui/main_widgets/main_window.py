@@ -1,5 +1,8 @@
 from PySide6 import QtCore, QtWidgets, QtGui
-from ui.api import resolvers
+import sys
+sys.path.append('C:/demo_app/')
+from src.ui.api.resolvers import server_available
+from src.ui.dialog_forms.download_window import DownloadWindow
 from src.ui.api.session import Session
 from ui.dialog_forms.sign_in_form import SignWindow
 from ui.orders_widgets.orders_list import OrdersList
@@ -10,7 +13,6 @@ from ui.main_widgets.authorization_menu import AuthorizationMenu
 from ui.main_widgets.user_profile import UserProfile
 import multiprocessing
 from ui.api.resolvers import get_all_orders
-import sys
 from src.ui.product_widgets.cart_widget import CartWidget
 import json
 
@@ -23,26 +25,37 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self) -> None:
         super().__init__()
+        
+        download_window = DownloadWindow(self)  
+        download_window.set_value_for_progress_bar(12)
         self.start_server()
         if self.__connect_check():
             if self.__connect_check()["code"] == 400:
                 self.show_message(text=self.__connect_check()["msg"], error=True, parent=self)
                 self.server_process.terminate()
                 exit()
-        
-        sign_window = SignWindow(self)
-        sign_window.show()
-        sign_window.exec_()
 
-        if self.session.user.userID == -1:
-            self.close_func()
+        download_window.set_value_for_progress_bar(50)
 
         self.__initUI()
         self.__settingUI()
+
+        download_window.set_value_for_progress_bar(85)
+
+        sign_window = SignWindow(self)
+
+        download_window.set_value_for_progress_bar(99)
+
+        sign_window.show()
+
+        download_window.finish(sign_window)
+
+        sign_window.exec_()
+        
         self.show()
     
     @staticmethod
-    @resolvers.server_available
+    @server_available
     def __connect_check() -> None:
         return {"code": 200, 'msg': 'Succesfully', 'error': False, 'result': None}
 

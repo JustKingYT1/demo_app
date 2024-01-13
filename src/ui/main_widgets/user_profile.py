@@ -111,6 +111,8 @@ class UserProfile(QtWidgets.QWidget):
         self.login_line_edit.setText(str(self.parent.session.user.login))  
 
     def on_leave_click(self) -> None:
+        if QtWidgets.QMessageBox.question(self, 'Info', 'Are you sure?') != QtWidgets.QMessageBox.StandardButton.Yes:
+            return
         self.parent.leave()
 
     def on_edit_click(self) -> None:

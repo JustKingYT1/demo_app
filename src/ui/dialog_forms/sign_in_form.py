@@ -2,6 +2,7 @@ from typing import Optional
 from PySide6 import QtWidgets, QtCore, QtGui
 import PySide6.QtCore
 import PySide6.QtGui
+from PySide6.QtGui import QCloseEvent
 import PySide6.QtWidgets
 
 from src.ui.api.session import Session
@@ -77,4 +78,6 @@ class SignWindow(QtWidgets.QDialog):
 
         self.hide()
     
+    def closeEvent(self, arg__1: QCloseEvent) -> None:
+        self.parent().close_func()
 
